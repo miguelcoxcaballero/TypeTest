@@ -116,7 +116,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-top: 3rem; 
+      margin-top: 3rem; /* Space from the main box */
       opacity: 0.6;
       transition: opacity 0.3s;
     }
@@ -255,6 +255,7 @@
       height: 180px;
       margin: 20px 0;
       overflow: hidden;
+      /* Adjusted mask to ensure right-side items are visible */
       mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
       -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     }
@@ -268,10 +269,33 @@
       transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     .charItem.center { font-size: 8rem; color: var(--text-main); opacity: 1; z-index: 3; }
-    .charItem.next { font-size: 4rem; color: var(--text-muted); opacity: 0.6; left: 68%; z-index: 2; }
-    .charItem.next2 { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; left: 82%; z-index: 1; }
-    .charItem.enter { font-size: 2.5rem; color: var(--text-muted); opacity: 0; left: 100%; z-index: 0; }
     
+    /* Adjusted positions to bring characters closer together */
+    .charItem.next { 
+      font-size: 4rem; 
+      color: var(--text-muted); 
+      opacity: 0.6; 
+      left: 68%; /* Brought closer from 75% */
+      z-index: 2; 
+    }
+    .charItem.next2 { 
+      font-size: 2.5rem; 
+      color: var(--text-muted); 
+      opacity: 0.3; 
+      left: 82%; /* Brought closer from 90% */
+      z-index: 1; 
+    }
+    
+    /* New entry state for smooth fade-in */
+    .charItem.enter {
+      font-size: 2.5rem;
+      color: var(--text-muted);
+      opacity: 0;
+      left: 100%;
+      z-index: 0;
+    }
+    
+    /* Animation state for incorrect */
     .charItem.shake { animation: shake 0.3s ease-in-out; color: var(--error) !important; }
     
     @keyframes shake {
@@ -370,7 +394,7 @@
     }
     .back-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
 
-    /* RESPONSIVE */
+    /* RESPONSIVE & MOBILE KEYBOARD FIXES */
     @media (max-width: 600px) {
       .container { padding: 1.5rem 1rem; border-radius: 0; min-height: 100vh; border: none; display: flex; flex-direction: column; justify-content: center; }
       h1 { font-size: 1.6rem; }
@@ -384,6 +408,69 @@
       #writeMode .test-area {
         max-height: 180px; 
         overflow-y: auto; /* Allow manual scrolling too */
+      }
+
+      /* Mobile Keyboard Focus State 
+         Activated via JS class 'keyboard-active' on body
+      */
+      body.keyboard-active {
+        align-items: flex-start; /* Move everything to top */
+        padding: 0;
+      }
+      body.keyboard-active .container {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        height: 100%;
+        padding: 10px;
+        background: var(--bg-color); /* Cover background */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      /* HIDE Elements when keyboard is open */
+      body.keyboard-active .typetest-header,
+      body.keyboard-active .brand-footer,
+      body.keyboard-active .back-btn,
+      body.keyboard-active #writeNotice,
+      body.keyboard-active .options-bar,
+      body.keyboard-active #charNotice {
+        display: none !important;
+      }
+      
+      /* COMPACT Stats */
+      body.keyboard-active .stats-bar {
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        flex-shrink: 0;
+      }
+      body.keyboard-active .stat-item {
+        flex-direction: row;
+        gap: 5px;
+        align-items: baseline;
+      }
+      body.keyboard-active .stat-label { font-size: 0.7rem; }
+      body.keyboard-active .stat-value { font-size: 1rem; }
+
+      /* MAXIMIZE WRITE AREA */
+      body.keyboard-active #writeMode {
+        display: flex !important;
+        flex-direction: column;
+        height: 100%;
+      }
+      body.keyboard-active #writeMode .test-area {
+        flex: 1; /* Fill remaining space */
+        max-height: none; /* Remove manual limit */
+        padding: 1rem;
+        margin-bottom: 5px; /* Slight buffer from keyboard */
+      }
+      
+      /* CHARACTER MODE ADJUSTMENT */
+      body.keyboard-active #characterMode {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
       }
     }
   </style>
@@ -522,6 +609,14 @@
       // On mobile, sometimes we need to reset value to avoid autocomplete weirdness
       mobileInput.value = ""; 
     }
+
+    // Toggle body class on focus/blur to handle mobile layout
+    mobileInput.addEventListener('focus', () => {
+        document.body.classList.add('keyboard-active');
+    });
+    mobileInput.addEventListener('blur', () => {
+        document.body.classList.remove('keyboard-active');
+    });
 
     function setMode(mode) {
       if (currentMode === mode || isTransitioning) return;
