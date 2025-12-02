@@ -225,7 +225,11 @@
     .word { display: inline-block; margin-right: 0.2ch; }
     .letter { position: relative; }
     .letter.correct { color: var(--text-main); }
-    .letter.incorrect { color: var(--error); text-decoration: underline; }
+    .letter.incorrect { 
+      color: var(--error); 
+      /* FIX: Replaced text-decoration with border-bottom for reliable underlining */
+      border-bottom: 2px solid var(--error);
+    }
 
     /* RESULTS */
     .write-finished .test-text, .write-finished #cursor { display: none; }
@@ -475,6 +479,7 @@
       body.keyboard-active .brand-footer,
       body.keyboard-active .back-btn,
       body.keyboard-active #writeNotice,
+      body.keyboard-active .options-bar,
       body.keyboard-active #charNotice {
         display: none !important;
       }
@@ -864,7 +869,12 @@
         letters[i].className = "letter"; 
         if (typedChar != null) {
             if (typedChar === expected) { letters[i].classList.add("correct"); correctCount++; }
-            else { letters[i].classList.add("incorrect"); }
+            else { 
+                letters[i].classList.add("incorrect"); 
+                // FIX: Using border-bottom instead of text-decoration for reliable underline
+                letters[i].style.textDecoration = "none";
+                letters[i].style.borderBottom = "2px solid var(--error)";
+            }
         }
       }
       let elapsed = 0;
