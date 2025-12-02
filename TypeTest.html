@@ -459,9 +459,9 @@
          padding: 0.5rem;
          margin: 0;
          border: none;
-         /* Use block to allow natural stacking */
-         display: flex;
-         flex-direction: column;
+         box-shadow: none;
+         /* Match background to remove visible line */
+         background: var(--bg-color);
          
          /* FIX: PIN TO TOP */
          position: fixed;
@@ -538,15 +538,14 @@
         flex-shrink: 0;
       }
       
-      /* Scale down char font sizes to fit */
-      body.mode-character.keyboard-active .charItem { top: 40%; } /* Lift up */
-      body.mode-character.keyboard-active .charItem.center { font-size: 3.5rem; z-index: 10;}
-      body.mode-character.keyboard-active .charItem.next { font-size: 1.5rem; left: 75%; z-index: 5; }
-      body.mode-character.keyboard-active .charItem.next2 { font-size: 1rem; left: 90%; z-index: 1; }
+      /* Scale chars larger */
+      body.mode-character.keyboard-active .charItem { top: 45%; } 
+      body.mode-character.keyboard-active .charItem.center { font-size: 6rem; z-index: 10;}
+      body.mode-character.keyboard-active .charItem.next { font-size: 2.5rem; left: 75%; z-index: 5; }
+      body.mode-character.keyboard-active .charItem.next2 { font-size: 1.5rem; left: 90%; z-index: 1; }
       
-      /* Move stats to top via order */
+      /* Move stats below carousel (removed order:-1) */
       body.mode-character.keyboard-active .stats-bar {
-        order: -1;
         margin-bottom: 0.5rem;
       }
       
@@ -911,7 +910,10 @@
     function stopWriteMode() { clearInterval(writeTimerInterval); }
     
     function initWriteMode() {
-      writeCurrentText = generateParagraph(60); // More words for scrolling check
+      // Less words on mobile
+      const isMobile = window.innerWidth <= 600;
+      writeCurrentText = generateParagraph(isMobile ? 30 : 60); 
+      
       writeTypedText = "";
       writeTimeLeft = writeTimerDuration;
       writeTestStarted = false;
