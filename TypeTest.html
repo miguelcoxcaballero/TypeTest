@@ -61,9 +61,53 @@
       max-width: 900px;
       text-align: center;
       position: relative;
-      transition: all 0.3s ease;
+      /* Smooth container resizing */
+      transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       backdrop-filter: blur(10px);
       z-index: 10;
+      overflow: hidden;
+    }
+
+    /* ========= ANIMATIONS ========= */
+    .mode {
+      /* Default state for any visible mode */
+      animation: fadeIn 0.4s ease forwards;
+    }
+    
+    .mode.fading-out {
+      animation: fadeOut 0.2s ease forwards;
+      pointer-events: none; /* Prevent clicks during fade out */
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.98); }
+    }
+
+    /* ========= TYPETEST HEADER ========= */
+    .typetest-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .typetest-icon {
+      font-size: 3.5rem;
+      color: var(--accent-color);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+    }
+    .typetest-title {
+      font-family: var(--font-logo);
+      font-weight: 700;
+      font-size: 2.8rem;
+      color: var(--text-main);
+      letter-spacing: -1px;
     }
 
     /* ========= BRANDING FOOTER ========= */
@@ -72,7 +116,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-top: 3rem; /* Space from the main box */
+      margin-top: 3rem; 
       opacity: 0.6;
       transition: opacity 0.3s;
     }
@@ -164,6 +208,10 @@
       min-height: 160px;
       cursor: text;
       text-align: left;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      /* Scroll behavior */
+      overflow-y: hidden; /* Desktop default */
+      scroll-behavior: smooth;
     }
     #writeMode .test-text {
       font-family: var(--font-mono);
@@ -171,17 +219,28 @@
       line-height: 2rem;
       color: var(--text-muted);
       word-break: break-word;
+      transition: opacity 0.5s ease, filter 0.5s ease;
+      position: relative; /* Context for cursor */
     }
     .word { display: inline-block; margin-right: 0.2ch; }
     .letter { position: relative; }
     .letter.correct { color: var(--text-main); }
     .letter.incorrect { color: var(--error); text-decoration: underline; }
     
+    /* FINISHED STATE ANIMATIONS */
+    @keyframes timeUpPulse {
+      0% { transform: scale(1); border-color: var(--card-border); }
+      50% { transform: scale(1.02); border-color: var(--error); box-shadow: 0 0 20px rgba(239, 83, 80, 0.3); }
+      100% { transform: scale(1); border-color: var(--card-border); }
+    }
+
+    .write-finished .test-area { animation: timeUpPulse 0.5s ease-out; }
+    .write-finished .test-text { opacity: 0.3; filter: grayscale(1); }
+    
     /* Smooth Caret */
     #cursor {
       position: absolute;
       width: 2px;
-      /* Reduced height for better fit */
       height: 1.2em; 
       background-color: var(--accent-color);
       box-shadow: 0 0 8px var(--accent-color);
@@ -196,7 +255,6 @@
       height: 180px;
       margin: 20px 0;
       overflow: hidden;
-      /* Adjusted mask to ensure right-side items are visible */
       mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
       -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     }
@@ -210,33 +268,10 @@
       transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     .charItem.center { font-size: 8rem; color: var(--text-main); opacity: 1; z-index: 3; }
+    .charItem.next { font-size: 4rem; color: var(--text-muted); opacity: 0.6; left: 68%; z-index: 2; }
+    .charItem.next2 { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; left: 82%; z-index: 1; }
+    .charItem.enter { font-size: 2.5rem; color: var(--text-muted); opacity: 0; left: 100%; z-index: 0; }
     
-    /* Adjusted positions to bring characters closer together */
-    .charItem.next { 
-      font-size: 4rem; 
-      color: var(--text-muted); 
-      opacity: 0.6; 
-      left: 68%; /* Brought closer from 75% */
-      z-index: 2; 
-    }
-    .charItem.next2 { 
-      font-size: 2.5rem; 
-      color: var(--text-muted); 
-      opacity: 0.3; 
-      left: 82%; /* Brought closer from 90% */
-      z-index: 1; 
-    }
-    
-    /* New entry state for smooth fade-in */
-    .charItem.enter {
-      font-size: 2.5rem;
-      color: var(--text-muted);
-      opacity: 0;
-      left: 100%;
-      z-index: 0;
-    }
-    
-    /* Animation state for incorrect */
     .charItem.shake { animation: shake 0.3s ease-in-out; color: var(--error) !important; }
     
     @keyframes shake {
@@ -245,7 +280,7 @@
       75% { transform: translate(calc(-50% + 10px), -50%); }
     }
 
-    /* Finger Diagram - Mobile Friendly */
+    /* Finger Diagram */
     .finger-diagram {
       display: flex;
       justify-content: center;
@@ -313,19 +348,8 @@
     }
 
     /* HIDDEN INPUT FOR MOBILE KEYBOARD */
-    #mobileInput {
-      position: absolute;
-      opacity: 0;
-      top: -1000px;
-    }
-    
-    /* Mobile Overlay for keyboard trigger */
-    .mobile-tap-area {
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-      cursor: text;
-    }
+    #mobileInput { position: absolute; opacity: 0; top: -1000px; }
+    .mobile-tap-area { position: absolute; inset: 0; z-index: 5; cursor: text; }
 
     .back-btn {
       position: absolute;
@@ -351,10 +375,16 @@
       .container { padding: 1.5rem 1rem; border-radius: 0; min-height: 100vh; border: none; display: flex; flex-direction: column; justify-content: center; }
       h1 { font-size: 1.6rem; }
       .mode-selector { grid-template-columns: 1fr; }
-      .finger-diagram { display: none; /* Hide fingers on small mobile to save space */ }
+      .finger-diagram { display: none; }
       .charItem.center { font-size: 5rem; }
       #writeMode .test-text { font-size: 1.1rem; }
       .back-btn { top: 10px; left: 10px; }
+      
+      /* Mobile Text Area - Scrollable with Limit */
+      #writeMode .test-area {
+        max-height: 180px; 
+        overflow-y: auto; /* Allow manual scrolling too */
+      }
     }
   </style>
 </head>
@@ -365,9 +395,14 @@
 
   <div class="container">
     
+    <!-- New TypeTest Header Logo -->
+    <div class="typetest-header">
+      <span class="material-symbols-rounded typetest-icon">keyboard_alt</span>
+      <span class="typetest-title">TypeTest</span>
+    </div>
+
     <!-- Landing Page -->
     <div id="landingPage">
-      <h1>Typing Test</h1>
       <p style="margin-bottom: 2rem;">Test your speed and accuracy.</p>
       
       <div class="mode-selector">
@@ -409,7 +444,7 @@
 
       <div class="test-area" id="writeArea">
         <div class="mobile-tap-area" onclick="focusInput()"></div>
-        <div id="cursor"></div>
+        <!-- Cursor is moved inside test-text by JS now -->
         <div class="test-text" id="writeTestText"></div>
       </div>
       
@@ -478,6 +513,8 @@
     // ----- GLOBAL VARS & HELPERS -----
     let currentMode = "landing";
     const mobileInput = document.getElementById("mobileInput");
+    let transitionTimeout = null;
+    let isTransitioning = false;
     
     // Focus helper for mobile keyboards
     function focusInput() {
@@ -487,39 +524,82 @@
     }
 
     function setMode(mode) {
-      currentMode = mode;
-      document.getElementById("landingPage").style.display = "none";
-      document.getElementById("writeMode").style.display = "none";
-      document.getElementById("characterMode").style.display = "none";
+      if (currentMode === mode || isTransitioning) return;
+      isTransitioning = true;
+
+      const container = document.querySelector('.container');
       
-      stopWriteMode();
-      if (charStatsInterval) {
-        clearInterval(charStatsInterval);
-        charStatsInterval = null;
-      }
+      // Map mode names to DOM IDs
+      const oldId = currentMode === 'landing' ? 'landingPage' : currentMode + 'Mode';
+      const newId = mode === 'landing' ? 'landingPage' : mode + 'Mode';
       
-      // Reset input for fresh start
-      mobileInput.value = "";
+      const oldEl = document.getElementById(oldId);
+      const newEl = document.getElementById(newId);
+
+      // 1. Capture Current Height & Lock It
+      const startHeight = container.offsetHeight;
+      container.style.height = startHeight + 'px';
       
-      if (mode === "landing") {
-        document.getElementById("landingPage").style.display = "block";
-        // Fix: Explicitly blur input so shortcuts work when returning to landing
-        mobileInput.blur();
-      } else if (mode === "write") {
-        document.getElementById("writeMode").style.display = "block";
-        initWriteMode();
-        setTimeout(focusInput, 100); // Auto focus for convenience
-      } else if (mode === "character") {
-        document.getElementById("characterMode").style.display = "block";
-        initCharacterMode();
-        setTimeout(focusInput, 100);
-      }
+      // 2. Start Fade Out of Old Content
+      oldEl.classList.add('fading-out');
+
+      // 3. Wait for Fade Out to Complete (200ms)
+      setTimeout(() => {
+        // Hide Old Content
+        oldEl.style.display = 'none';
+        oldEl.classList.remove('fading-out');
+        
+        // Clean up previous mode states
+        stopWriteMode();
+        if (charStatsInterval) {
+            clearInterval(charStatsInterval);
+            charStatsInterval = null;
+        }
+        mobileInput.value = "";
+
+        // Set New Mode State
+        currentMode = mode;
+        if (mode === 'landing') mobileInput.blur();
+        
+        // Show New Content (CSS animation triggers here)
+        newEl.style.display = 'block';
+        
+        // Init New Logic
+        if (mode === 'write') {
+            initWriteMode();
+            setTimeout(focusInput, 50);
+        } else if (mode === 'character') {
+            initCharacterMode();
+            setTimeout(focusInput, 50);
+        }
+
+        // 4. Measure New Content Height
+        // Unset height property temporarily to get 'auto' height
+        container.style.height = 'auto'; 
+        const endHeight = container.offsetHeight;
+        
+        // Snap back to start height instantly to prepare for transition
+        container.style.height = startHeight + 'px';
+        void container.offsetHeight; // Force browser reflow
+        
+        // 5. Animate to New Height
+        container.style.height = endHeight + 'px';
+        
+        // 6. Cleanup Height Lock after Transition (300ms)
+        if (transitionTimeout) clearTimeout(transitionTimeout);
+        transitionTimeout = setTimeout(() => {
+            container.style.height = 'auto';
+            isTransitioning = false;
+        }, 300);
+
+      }, 200); // Matches CSS fadeOut duration
     }
 
     // --- EVENT LISTENERS ---
     
     // 1. Physical Keyboard support
     document.addEventListener("keydown", function(e) {
+      if (isTransitioning) return;
       if (e.key === "Escape") { setMode("landing"); return; }
       
       // Prevent double handling if focused on input (Input event handles logic)
@@ -536,11 +616,11 @@
       if (currentMode === "landing") {
         if (e.key.toLowerCase() === "w") {
             setMode("write");
-            return; // Fix: Prevent fallthrough to write handler
+            return; 
         }
         if (e.key.toLowerCase() === "c") {
             setMode("character");
-            return; // Fix: Prevent fallthrough to character handler
+            return;
         }
       }
       
@@ -553,14 +633,13 @@
     mobileInput.addEventListener("input", (e) => {
       // Get the last character typed
       const val = mobileInput.value;
-      if (!val) return; // ignore empty (e.g. backspace handled differently)
+      if (!val) return; 
       
-      const char = val.slice(-1); // get last char
+      const char = val.slice(-1); 
       
       if (currentMode === "write") handleWriteKey(char);
       else if (currentMode === "character") handleCharacterKey(char);
       
-      // Clear input to keep it clean for next char, but keep focus
       mobileInput.value = ""; 
     });
 
@@ -568,7 +647,6 @@
     mobileInput.addEventListener("keydown", (e) => {
       if (e.key === "Backspace") {
         if (currentMode === "write") handleWriteKey("Backspace");
-        // Character mode ignores backspace
       }
     });
 
@@ -605,6 +683,12 @@
     function renderWriteTestText() {
       const container = document.getElementById("writeTestText");
       container.innerHTML = "";
+      
+      // Inject cursor first
+      const cursor = document.createElement("div");
+      cursor.id = "cursor";
+      container.appendChild(cursor);
+
       const words = writeCurrentText.split(" ");
       words.forEach((word, wIndex) => {
         const wordSpan = document.createElement("span");
@@ -618,36 +702,52 @@
         if (wIndex < words.length - 1) {
           const spaceSpan = document.createElement("span");
           spaceSpan.classList.add("letter");
-          spaceSpan.innerHTML = "&nbsp;"; // explicit space for width
+          spaceSpan.innerHTML = "&nbsp;"; 
           wordSpan.appendChild(spaceSpan);
         }
         container.appendChild(wordSpan);
       });
-      // Force a slight delay to ensure layout is complete before positioning cursor
       requestAnimationFrame(updateCursorPosition);
     }
     
     function updateCursorPosition() {
       const letters = document.querySelectorAll("#writeTestText .letter");
       const cursor = document.getElementById("cursor");
+      const container = document.getElementById("writeArea");
       
       if (writeTypedText.length < letters.length) {
         const currentLetter = letters[writeTypedText.length];
-        // Calculate relative position
-        const parentRect = document.getElementById("writeTestText").getBoundingClientRect();
-        const letterRect = currentLetter.getBoundingClientRect();
         
-        // Get actual cursor height for centering
-        const cursorHeight = cursor.offsetHeight;
-        
-        // Center Vertically: Top + (SlotHeight - CursorHeight) / 2
-        const top = (letterRect.top - parentRect.top) + (letterRect.height - cursorHeight) / 2;
-        const left = letterRect.left - parentRect.left;
-        
-        cursor.style.transform = `translate(${left}px, ${top}px)`;
+        // 1. Position Cursor (Relative to text container now)
+        cursor.style.left = currentLetter.offsetLeft + 'px';
+        cursor.style.top = currentLetter.offsetTop + 'px';
+        cursor.style.height = currentLetter.offsetHeight + 'px'; // Match line height
         cursor.style.opacity = 1;
+        cursor.style.transform = 'none'; // Clear old transform logic
+
+        // 2. Auto-Scroll Logic
+        // Calculate where the cursor is relative to the scroll view
+        const letterTop = currentLetter.offsetTop;
+        const letterHeight = currentLetter.offsetHeight;
+        const scrollTop = container.scrollTop;
+        const containerHeight = container.clientHeight;
+
+        // If cursor is below visible area, scroll down
+        if (letterTop + letterHeight > scrollTop + containerHeight - 20) {
+            container.scrollTo({
+                top: letterTop - containerHeight / 2, // Scroll to center active line
+                behavior: 'smooth'
+            });
+        } 
+        // If cursor is above visible area (backspace), scroll up
+        else if (letterTop < scrollTop + 20) {
+             container.scrollTo({
+                top: Math.max(0, letterTop - 50),
+                behavior: 'smooth'
+            });
+        }
+
       } else {
-        // End of text
         cursor.style.opacity = 0;
       }
     }
@@ -656,14 +756,12 @@
       const letters = document.querySelectorAll("#writeTestText .letter");
       let correctCount = 0;
       
-      // Update visual classes
       for (let i = 0; i < letters.length; i++) {
-        const expected = letters[i].textContent.replace(/\u00a0/, " "); // handle nbsp
+        const expected = letters[i].textContent.replace(/\u00a0/, " "); 
         const typedChar = writeTypedText[i];
-        letters[i].className = "letter"; // reset
+        letters[i].className = "letter"; 
         
         if (typedChar == null) {
-          // untyped
         } else if (typedChar === expected) {
           letters[i].classList.add("correct");
           correctCount++;
@@ -696,7 +794,10 @@
       clearInterval(writeTimerInterval);
       writeTestEnded = true;
       document.getElementById("writeNotice").textContent = "Test over – Tap restart or press Space";
-      mobileInput.blur(); // Hide keyboard
+      mobileInput.blur(); 
+      
+      const writeModeDiv = document.getElementById("writeMode");
+      writeModeDiv.classList.add("write-finished");
     }
     
     function stopWriteMode() {
@@ -714,6 +815,7 @@
       document.getElementById("writeWpm").textContent = "0";
       document.getElementById("writeAcc").textContent = "100%";
       document.getElementById("writeNotice").textContent = "Tap text to start typing";
+      document.getElementById("writeMode").classList.remove("write-finished");
       renderWriteTestText();
     }
     
@@ -736,7 +838,7 @@
         writeTypedText += key;
       }
       
-      updateWriteStats(); // This handles visual updates too
+      updateWriteStats(); 
       updateCursorPosition();
       
       const totalLetters = document.querySelectorAll("#writeTestText .letter").length;
@@ -788,7 +890,6 @@
       if (!charTestStarted) return;
       const now = Date.now();
       
-      // Pause detection (3s inactive)
       if (now - charLastKeyTime > 3000) {
         charTestStarted = false;
         charStartTime = null;
@@ -836,10 +937,9 @@
         charCorrectCount++;
         shiftCarousel();
       } else {
-        // Shake effect
         const centerItem = document.querySelector(".charItem.center");
         centerItem.classList.remove("shake");
-        void centerItem.offsetWidth; // trigger reflow
+        void centerItem.offsetWidth; 
         centerItem.classList.add("shake");
       }
     }
@@ -848,7 +948,6 @@
       const container = document.getElementById("charCarousel");
       if (container.children.length < 3) return;
       
-      // Animate out
       container.removeChild(container.children[0]);
       
       const newCenter = container.children[0];
@@ -864,15 +963,12 @@
       charQueue.push(newChar);
       
       const newItem = document.createElement("div");
-      // Start in 'enter' state (off-screen right)
       newItem.className = "charItem enter"; 
       newItem.textContent = newChar.toUpperCase();
       container.appendChild(newItem);
       
-      // Force reflow to ensure the 'enter' state is applied before transitioning
       void newItem.offsetWidth; 
       
-      // Transition to final 'next2' position
       newItem.classList.remove("enter");
       newItem.classList.add("next2");
       
