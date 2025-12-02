@@ -23,12 +23,16 @@
       --text-muted: #888888;
       /* Accent Color for UI */
       --accent-color: #66BB6A;
-      --accent-glow: rgba(102, 187, 106, 0.3);
+      /* Increased glow intensity */
+      --accent-glow: rgba(102, 187, 106, 0.6); 
       /* Accent Color for Logo */
       --accent-copper: #d97736;
+      --copper-glow: rgba(217, 119, 54, 0.6);
       
       --success: #66BB6A;
       --error: #EF5350;
+      --error-glow: rgba(239, 83, 80, 0.6);
+      
       --font-logo: 'Comfortaa', cursive;
       --font-body: 'Inter', sans-serif;
       --font-mono: 'Roboto Mono', monospace;
@@ -70,6 +74,7 @@
 
     /* ========= ANIMATIONS ========= */
     .mode {
+      width: 100%;
       /* Default state for any visible mode */
       animation: fadeIn 0.4s ease forwards;
     }
@@ -96,9 +101,11 @@
       justify-content: center;
       gap: 0.5rem;
       margin-bottom: 1.5rem;
+      flex-shrink: 0;
     }
     .typetest-icon {
       font-size: 3.5rem;
+      /* Reverted to green */
       color: var(--accent-color);
       filter: drop-shadow(0 0 8px var(--accent-glow));
     }
@@ -153,15 +160,23 @@
     
     .stats-bar {
       display: flex;
+      width: 100%;
       justify-content: space-between;
       align-items: center;
       background: rgba(255,255,255,0.03);
       padding: 1rem;
       border-radius: 12px;
-      margin: 1.5rem 0;
+      margin: 1.5rem 0 1rem 0; /* Reduced bottom margin for timer bar */
       font-family: var(--font-mono);
       border: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+      transition: all 0.3s ease;
     }
+    /* Hide stats bar when results are shown */
+    .write-finished .stats-bar {
+        display: none;
+    }
+
     .stat-item {
       display: flex;
       flex-direction: column;
@@ -169,12 +184,41 @@
     .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
     .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); }
 
+    /* ========= TIMER BAR ========= */
+    .timer-bar {
+      width: 100%;
+      height: 8px; /* Thicker bar */
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      position: relative;
+      /* Add outer glow/reflection to the container */
+      box-shadow: 0 0 15px rgba(0,0,0,0.5) inset;
+      transition: all 0.3s ease;
+    }
+     /* Hide timer bar when results are shown */
+    .write-finished .timer-bar {
+        display: none;
+    }
+    .timer-progress {
+      height: 100%;
+      width: 100%;
+      background-color: var(--accent-color);
+      /* Stronger, larger glow for reflection effect */
+      box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow);
+      transform-origin: left;
+      /* Smoother color transition (1s ease-in-out) */
+      transition: width 1s linear, background-color 1s ease-in-out, box-shadow 1s ease-in-out;
+    }
+
     /* ========= INTERACTIVE ELEMENTS ========= */
     .mode-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin: 2rem 0;
+      width: 100%;
     }
     
     .mode-btn {
@@ -198,6 +242,24 @@
     .mode-btn h3 { font-size: 1.1rem; font-weight: 600; }
     .mode-btn small { font-size: 0.8rem; color: var(--text-muted); }
 
+    /* RESTART BUTTON (Mobile & Desktop Results) */
+    #restartBtn {
+      display: none; /* Hidden by default */
+      margin: 1rem auto 0 auto; /* Center via margin */
+      padding: 12px 24px;
+      background: var(--accent-color); /* Reverted to green for consistency */
+      color: #000;
+      font-family: var(--font-logo); /* Comfortaa Font */
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--accent-glow);
+      animation: fadeIn 0.3s ease;
+    }
+    #restartBtn:active { transform: scale(0.95); }
+
     /* ========= WRITE MODE ========= */
     #writeMode .test-area {
       position: relative;
@@ -206,12 +268,13 @@
       border-radius: 16px;
       border: 1px solid var(--card-border);
       min-height: 160px;
+      width: 100%;
       cursor: text;
       text-align: left;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      /* Scroll behavior */
-      overflow-y: hidden; /* Desktop default */
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth grow transition */
+      overflow-y: hidden;
       scroll-behavior: smooth;
+      flex: 1; /* Allow growing */
     }
     #writeMode .test-text {
       font-family: var(--font-mono);
@@ -220,22 +283,104 @@
       color: var(--text-muted);
       word-break: break-word;
       transition: opacity 0.5s ease, filter 0.5s ease;
-      position: relative; /* Context for cursor */
+      position: relative;
     }
     .word { display: inline-block; margin-right: 0.2ch; }
     .letter { position: relative; }
     .letter.correct { color: var(--text-main); }
     .letter.incorrect { color: var(--error); text-decoration: underline; }
     
-    /* FINISHED STATE ANIMATIONS */
-    @keyframes timeUpPulse {
-      0% { transform: scale(1); border-color: var(--card-border); }
-      50% { transform: scale(1.02); border-color: var(--error); box-shadow: 0 0 20px rgba(239, 83, 80, 0.3); }
-      100% { transform: scale(1); border-color: var(--card-border); }
+    /* FINISHED STATE ANIMATIONS & RESULTS GRAPHIC */
+    .write-finished .test-text,
+    .write-finished #cursor,
+    .write-finished .mobile-tap-area { 
+        display: none; /* Hide text area content */
     }
 
-    .write-finished .test-area { animation: timeUpPulse 0.5s ease-out; }
-    .write-finished .test-text { opacity: 0.3; filter: grayscale(1); }
+    .write-finished .test-area { 
+        border-color: var(--accent-color);
+        box-shadow: 0 0 30px rgba(102, 187, 106, 0.2);
+        /* Ensure it grows to fit new content */
+        min-height: 300px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.4); /* Darker background for contrast */
+    }
+
+    /* Results Graphic Container */
+    #resultsGraphic {
+        display: none; /* Hidden by default */
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        gap: 1.5rem;
+        animation: fadeIn 0.5s ease 0.2s forwards; /* Delayed fade-in */
+        opacity: 0; /* Start invisible */
+    }
+    .write-finished #resultsGraphic {
+        display: flex;
+    }
+
+    /* Result Blocks */
+    .result-block {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--card-border);
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+    }
+    .result-block::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 16px;
+        padding: 2px; /* Border width */
+        background: linear-gradient(45deg, var(--accent-color), transparent 60%);
+        -webkit-mask: 
+           linear-gradient(#fff 0 0) content-box, 
+           linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+    
+    /* WPM Block */
+    .wpm-block .label { font-size: 0.9rem; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 0.5rem;}
+    .wpm-block .value { font-size: 5rem; font-weight: 700; color: var(--accent-color); line-height: 1; text-shadow: 0 0 20px var(--accent-glow); }
+    
+    /* Accuracy Block */
+    .accuracy-block .label { font-size: 0.9rem; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 1rem; display: block;}
+    .accuracy-bar-container {
+        height: 24px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+    }
+    .accuracy-bar {
+        height: 100%;
+        width: 0%; /* Animates in JS */
+        background: linear-gradient(90deg, var(--accent-color) 0%, #A5D6A7 100%);
+        border-radius: 12px;
+        box-shadow: 0 0 15px var(--accent-glow);
+        transition: width 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.3s; /* Delayed smooth fill */
+        position: relative;
+    }
+    .accuracy-value {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 700;
+        color: #000;
+        font-size: 0.9rem;
+        z-index: 2;
+    }
+
+
     
     /* Smooth Caret */
     #cursor {
@@ -253,11 +398,12 @@
     #charCarousel {
       position: relative;
       height: 180px;
+      width: 100%;
       margin: 20px 0;
       overflow: hidden;
-      /* Adjusted mask to ensure right-side items are visible */
       mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
       -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      flex-shrink: 0;
     }
     .charItem {
       position: absolute;
@@ -269,33 +415,9 @@
       transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     .charItem.center { font-size: 8rem; color: var(--text-main); opacity: 1; z-index: 3; }
-    
-    /* Adjusted positions to bring characters closer together */
-    .charItem.next { 
-      font-size: 4rem; 
-      color: var(--text-muted); 
-      opacity: 0.6; 
-      left: 68%; /* Brought closer from 75% */
-      z-index: 2; 
-    }
-    .charItem.next2 { 
-      font-size: 2.5rem; 
-      color: var(--text-muted); 
-      opacity: 0.3; 
-      left: 82%; /* Brought closer from 90% */
-      z-index: 1; 
-    }
-    
-    /* New entry state for smooth fade-in */
-    .charItem.enter {
-      font-size: 2.5rem;
-      color: var(--text-muted);
-      opacity: 0;
-      left: 100%;
-      z-index: 0;
-    }
-    
-    /* Animation state for incorrect */
+    .charItem.next { font-size: 4rem; color: var(--text-muted); opacity: 0.6; left: 68%; z-index: 2; }
+    .charItem.next2 { font-size: 2.5rem; color: var(--text-muted); opacity: 0.3; left: 82%; z-index: 1; }
+    .charItem.enter { font-size: 2.5rem; color: var(--text-muted); opacity: 0; left: 100%; z-index: 0; }
     .charItem.shake { animation: shake 0.3s ease-in-out; color: var(--error) !important; }
     
     @keyframes shake {
@@ -309,8 +431,9 @@
       display: flex;
       justify-content: center;
       gap: 4px;
-      margin-top: 2rem;
+      margin-top: 1rem;
       flex-wrap: wrap;
+      flex-shrink: 0;
     }
     .finger {
       padding: 6px 12px;
@@ -391,12 +514,25 @@
       padding: 8px;
       border-radius: 8px;
       transition: 0.2s;
+      z-index: 20;
     }
     .back-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
 
     /* RESPONSIVE & MOBILE KEYBOARD FIXES */
     @media (max-width: 600px) {
-      .container { padding: 1.5rem 1rem; border-radius: 0; min-height: 100vh; border: none; display: flex; flex-direction: column; justify-content: center; }
+      .container { 
+        padding: 1.5rem 1rem; 
+        border-radius: 0; 
+        /* Use 100% height to fit screen */
+        height: 100%;
+        border: none; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        box-shadow: none;
+        max-height: none;
+      }
+      
       h1 { font-size: 1.6rem; }
       .mode-selector { grid-template-columns: 1fr; }
       .finger-diagram { display: none; }
@@ -404,17 +540,20 @@
       #writeMode .test-text { font-size: 1.1rem; }
       .back-btn { top: 10px; left: 10px; }
       
-      /* Mobile Text Area - Scrollable with Limit */
       #writeMode .test-area {
         max-height: 180px; 
-        overflow-y: auto; /* Allow manual scrolling too */
+        overflow-y: auto; 
+      }
+      
+      /* Allow test area to grow on results screen */
+      .write-finished #writeMode .test-area {
+          max-height: none;
+          flex: 1;
       }
 
-      /* Mobile Keyboard Focus State 
-         Activated via JS class 'keyboard-active' on body
-      */
+      /* Mobile Keyboard Focus State */
       body.keyboard-active {
-        align-items: flex-start; /* Move everything to top */
+        align-items: flex-start;
         padding: 0;
       }
       body.keyboard-active .container {
@@ -422,13 +561,14 @@
         inset: 0;
         z-index: 999;
         height: 100%;
+        max-height: 100vh;
         padding: 10px;
-        background: var(--bg-color); /* Cover background */
+        background: var(--bg-color);
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
       }
-      /* HIDE Elements when keyboard is open */
+      /* HIDE Elements to save space */
       body.keyboard-active .typetest-header,
       body.keyboard-active .brand-footer,
       body.keyboard-active .back-btn,
@@ -452,26 +592,30 @@
       body.keyboard-active .stat-label { font-size: 0.7rem; }
       body.keyboard-active .stat-value { font-size: 1rem; }
 
-      /* MAXIMIZE WRITE AREA */
-      body.keyboard-active #writeMode {
+      /* MAXIMIZE WRITE AREA - SCOPED TO WRITE MODE */
+      body.mode-write.keyboard-active #writeMode {
         display: flex !important;
         flex-direction: column;
         height: 100%;
       }
-      body.keyboard-active #writeMode .test-area {
-        flex: 1; /* Fill remaining space */
-        max-height: none; /* Remove manual limit */
+      body.mode-write.keyboard-active #writeMode .test-area {
+        flex: 1;
+        max-height: none;
         padding: 1rem;
-        margin-bottom: 5px; /* Slight buffer from keyboard */
+        margin-bottom: 5px;
       }
       
-      /* CHARACTER MODE ADJUSTMENT */
-      body.keyboard-active #characterMode {
+      /* CHARACTER MODE ADJUSTMENT - SCOPED TO CHAR MODE */
+      body.mode-character.keyboard-active #characterMode {
         display: flex !important;
         flex-direction: column;
         justify-content: center;
         height: 100%;
       }
+      
+      /* Important: Ensure inactive modes stay hidden */
+      body.mode-character.keyboard-active #writeMode { display: none !important; }
+      body.mode-write.keyboard-active #characterMode { display: none !important; }
     }
   </style>
 </head>
@@ -490,8 +634,6 @@
 
     <!-- Landing Page -->
     <div id="landingPage">
-      <p style="margin-bottom: 2rem;">Test your speed and accuracy.</p>
-      
       <div class="mode-selector">
         <div class="mode-btn" onclick="setMode('write')">
           <span class="material-symbols-rounded">article</span>
@@ -504,8 +646,6 @@
           <small>Press C</small>
         </div>
       </div>
-      
-      <p style="font-size: 0.85rem; opacity: 0.5;">Use physical keyboard or tap to type on mobile.</p>
     </div>
 
     <!-- Write Mode -->
@@ -529,13 +669,38 @@
         </div>
       </div>
 
+      <!-- Countdown Bar -->
+      <div class="timer-bar">
+        <div class="timer-progress" id="timerProgress"></div>
+      </div>
+
       <div class="test-area" id="writeArea">
         <div class="mobile-tap-area" onclick="focusInput()"></div>
         <!-- Cursor is moved inside test-text by JS now -->
         <div class="test-text" id="writeTestText"></div>
+        
+        <!-- New Results Graphic Container -->
+        <div id="resultsGraphic">
+            <div class="result-block wpm-block">
+                <div class="label">WORDS PER MINUTE</div>
+                <div class="value" id="finalWpm">0</div>
+            </div>
+            <div class="result-block accuracy-block">
+                <span class="label">ACCURACY</span>
+                <div class="accuracy-bar-container">
+                    <div class="accuracy-bar" id="finalAccBar">
+                        <span class="accuracy-value" id="finalAccValue">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
       </div>
       
       <p id="writeNotice" style="margin-top: 1.5rem; font-size: 0.9rem;">Tap text to start typing</p>
+      
+      <!-- New Restart Button for Mobile -->
+      <button id="restartBtn" onclick="initWriteMode()">Restart Test</button>
     </div>
 
     <!-- Character Mode -->
@@ -553,7 +718,7 @@
       </div>
 
       <!-- Helper to focus keyboard on mobile -->
-      <div style="position:relative;" onclick="focusInput()">
+      <div style="position:relative; width: 100%;" onclick="focusInput()">
         <div id="charCarousel"></div>
       </div>
 
@@ -630,6 +795,10 @@
       
       const oldEl = document.getElementById(oldId);
       const newEl = document.getElementById(newId);
+
+      // Manage Body Classes for Mobile Scoping
+      document.body.classList.remove('mode-landing', 'mode-write', 'mode-character');
+      document.body.classList.add('mode-' + mode);
 
       // 1. Capture Current Height & Lock It
       const startHeight = container.offsetHeight;
@@ -755,24 +924,22 @@
     let writeTestEnded = false;
     let writeStartTime = null;
     
+    // EXPANDED WORD POOL (~160 words)
+    const masterWordPool = [
+      'time','person','year','way','day','thing','man','world','life','hand','part','child','eye','woman','place','work','week','case','point','government','company','number','group','problem','fact','night','water','room','mother','area','money','story','friend','love','car','tree','computer','phone','code','program','design','language','art','music','video','film','photo','game','play','park','home','house','city','country','ocean','mountain','river','forest','desert','sky','sun','moon','star','planet','space','universe','energy','force','power','light','dark','wind','fire','earth','metal','glass','stone','wood','air','silver','gold','copper','iron','mercury','diamond','crystal','cloud','rain','snow','ice','storm','calm','whisper','echo','shadow','reflection','silence','sound','noise','chatter','breeze','wave','tide',
+      // New additions
+      'think','great','small','large','found','write','read','learn','build','watch','happy','angry','quick','slow','heavy','light','green','blue','red','white','black','north','south','east','west','start','finish','under','above','close','open','table','chair','paper','pencil','music','movie','pixel','screen','mouse','click','press','enter','shift','control','escape','delete','insert','logic','magic','dream','sleep','awake','focus','speed','count','score','level','stage','boss','fight','peace','trust','truth','false','wrong','right','check','habit','cycle','orbit','solar','lunar','polar','ocean','beach','sand','dune','hill','field','grass','leaf','root'
+    ];
+
     function generateParagraph(wordCount) {
-      const wordPool = [
-        'time','person','year','way','day','thing','man','world','life','hand',
-        'part','child','eye','woman','place','work','week','case','point','government',
-        'company','number','group','problem','fact','night','water','room','mother','area',
-        'money','story','friend','love','car','tree','computer','phone','code','program',
-        'design','language','art','music','video','film','photo','game','play','park',
-        'home','house','city','country','ocean','mountain','river','forest','desert','sky',
-        'sun','moon','star','planet','space','universe','energy','force','power','light',
-        'dark','wind','fire','earth','metal','glass','stone','wood','air','silver',
-        'gold','copper','iron','mercury','diamond','crystal','cloud','rain','snow','ice'
-      ];
-      let paragraph = [];
-      for (let i = 0; i < wordCount; i++) {
-        let randomWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-        paragraph.push(randomWord);
+      // Fisher-Yates Shuffle for uniqueness
+      const shuffled = [...masterWordPool];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      return paragraph.join(" ");
+      // Slice only what we need
+      return shuffled.slice(0, wordCount).join(" ");
     }
     
     function renderWriteTestText() {
@@ -847,7 +1014,32 @@
       }
     }
     
+    // New function to calculate final stats
+    function calculateFinalStats() {
+        const letters = document.querySelectorAll("#writeTestText .letter");
+        let correctCount = 0;
+        for (let i = 0; i < writeTypedText.length; i++) {
+             const expected = letters[i].textContent.replace(/\u00a0/, " ");
+             if (writeTypedText[i] === expected) {
+                 correctCount++;
+             }
+        }
+        
+        let elapsed = (Date.now() - writeStartTime) / 1000;
+        // Ensure elapsed is at least the full duration if timer ran out
+        elapsed = Math.max(elapsed, writeTimerDuration); 
+
+        const accuracy = writeTypedText.length ? Math.round((correctCount / writeTypedText.length) * 100) : 0;
+        // Standard WPM calculation: (Correct Keystrokes / 5) / Time in minutes
+        const wpm = Math.round((correctCount / 5) / (elapsed / 60));
+        
+        return { wpm, accuracy };
+    }
+
     function updateWriteStats() {
+      // Only update the live stats bar if the test isn't over
+      if (writeTestEnded) return;
+
       const letters = document.querySelectorAll("#writeTestText .letter");
       let correctCount = 0;
       
@@ -879,6 +1071,22 @@
       writeTimerInterval = setInterval(() => {
         writeTimeLeft--;
         document.getElementById("writeTimer").textContent = writeTimeLeft;
+        
+        // Update Bar
+        const pct = (writeTimeLeft / writeTimerDuration) * 100;
+        const bar = document.getElementById("timerProgress");
+        bar.style.width = pct + "%";
+        
+        // Color changes
+        if (writeTimeLeft <= 10) {
+            bar.style.backgroundColor = "var(--accent-copper)";
+            bar.style.boxShadow = "0 0 20px var(--copper-glow), 0 0 40px var(--copper-glow)";
+        }
+        if (writeTimeLeft <= 5) {
+            bar.style.backgroundColor = "var(--error)";
+            bar.style.boxShadow = "0 0 20px var(--error-glow), 0 0 40px var(--error-glow)";
+        }
+
         if (writeTimeLeft <= 0) {
           endWriteMode();
         }
@@ -893,6 +1101,20 @@
       
       const writeModeDiv = document.getElementById("writeMode");
       writeModeDiv.classList.add("write-finished");
+      
+      // Calculate Final Stats
+      const { wpm, accuracy } = calculateFinalStats();
+      
+      // Populate Results Graphic
+      document.getElementById("finalWpm").textContent = wpm;
+      document.getElementById("finalAccValue").textContent = accuracy + "%";
+      // Trigger animation after a short delay for smooth transition
+      setTimeout(() => {
+         document.getElementById("finalAccBar").style.width = accuracy + "%";
+      }, 100);
+
+      // Show Restart Button on Mobile & Desktop
+      document.getElementById("restartBtn").style.display = "block";
     }
     
     function stopWriteMode() {
@@ -911,6 +1133,22 @@
       document.getElementById("writeAcc").textContent = "100%";
       document.getElementById("writeNotice").textContent = "Tap text to start typing";
       document.getElementById("writeMode").classList.remove("write-finished");
+      
+      // Hide Restart Button
+      document.getElementById("restartBtn").style.display = "none";
+      
+      // Reset Timer Bar
+      const bar = document.getElementById("timerProgress");
+      bar.style.transition = "none"; 
+      bar.style.width = "100%";
+      bar.style.backgroundColor = ""; 
+      bar.style.boxShadow = ""; 
+      void bar.offsetWidth; 
+      bar.style.transition = "width 1s linear, background-color 1s ease-in-out, box-shadow 1s ease-in-out";
+
+      // Reset Accuracy Bar
+      document.getElementById("finalAccBar").style.width = "0%";
+
       renderWriteTestText();
     }
     
