@@ -462,6 +462,12 @@
          /* Use block to allow natural stacking */
          display: flex;
          flex-direction: column;
+         
+         /* FIX: PIN TO TOP */
+         position: fixed;
+         top: 0;
+         left: 0;
+         justify-content: flex-start;
       }
 
       /* Hide non-essentials when keyboard is open */
@@ -503,10 +509,10 @@
         margin-bottom: 5px;
         overflow-y: auto;
       }
-      /* Smaller Text for Mobile Write Mode */
+      /* Resized Text for Mobile Write Mode */
       body.mode-write.keyboard-active #writeMode .test-text {
-        font-size: 0.85rem; /* Reduced further for fitting */
-        line-height: 1.3;
+        font-size: 1.1rem; /* Restored readability */
+        line-height: 1.5;
       }
       body.mode-write.keyboard-active .timer-bar {
         margin-bottom: 0.5rem;
