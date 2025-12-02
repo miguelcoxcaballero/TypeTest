@@ -21,6 +21,7 @@
       --card-border: #333333;
       --text-main: #f5f5f0;
       --text-muted: #888888;
+      /* Accent Color for UI */
       --accent-color: #66BB6A;
       --accent-glow: rgba(102, 187, 106, 0.6); 
       --accent-copper: #d97736;
@@ -349,6 +350,15 @@
     .custom-checkbox input { display: none; }
     .checkbox-box { width: 18px; height: 18px; border: 2px solid var(--text-muted); border-radius: 4px; display: inline-block; position: relative; }
     .custom-checkbox input:checked + .checkbox-box { background: var(--accent-color); border-color: var(--accent-color); }
+    .custom-checkbox input:checked + .checkbox-box::after {
+      content: '';
+      position: absolute;
+      left: 5px; top: 1px;
+      width: 4px; height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
 
     /* ========= MOBILE SPECIFIC ========= */
     @media (max-width: 600px) {
@@ -385,30 +395,43 @@
       body.keyboard-active .brand-footer,
       body.keyboard-active .back-btn,
       body.keyboard-active #writeNotice,
-      body.keyboard-active .options-bar,
       body.keyboard-active #charNotice {
         display: none !important;
       }
       
-      /* --- WRITE MODE MOBILE OPTIMIZATION --- */
+      /* COMPACT Stats */
+      body.keyboard-active .stats-bar {
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        flex-shrink: 0;
+      }
+      body.keyboard-active .stat-item {
+        flex-direction: row;
+        gap: 5px;
+        align-items: baseline;
+      }
+      body.keyboard-active .stat-label { font-size: 0.7rem; }
+      body.keyboard-active .stat-value { font-size: 1rem; }
+
+      /* MAXIMIZE WRITE AREA - SCOPED TO WRITE MODE */
       body.mode-write.keyboard-active #writeMode {
         display: flex !important;
         flex-direction: column;
         height: 100%;
-        padding-bottom: 0.5rem;
       }
-      body.mode-write.keyboard-active .stats-bar {
-        padding: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      /* Make text area fill space */
-      body.mode-write.keyboard-active .test-area {
+      body.mode-write.keyboard-active #writeMode .test-area {
         flex: 1;
-        min-height: 0;
         max-height: none;
+        padding: 1rem;
+        margin-bottom: 5px;
       }
-
-      /* --- CHARACTER MODE MOBILE OPTIMIZATION --- */
+      /* Smaller Text for Mobile Write Mode */
+      body.mode-write.keyboard-active #writeMode .test-text {
+        font-size: 1rem; /* Reduced from 1.1rem/1.4rem */
+        line-height: 1.5rem;
+      }
+      
+      /* CHARACTER MODE ADJUSTMENT - SCOPED TO CHAR MODE */
       body.mode-character.keyboard-active #characterMode {
         display: flex !important;
         flex-direction: column;
@@ -416,18 +439,27 @@
         height: 100%;
       }
       body.mode-character.keyboard-active #charCarousel {
-        height: 100px; /* Drastically reduced height */
+        height: 140px; /* Visible enough */
         margin: 0.5rem 0;
+        /* Fix clipping */
+        overflow: hidden; 
       }
-      /* Shrink fonts to fit */
-      body.mode-character.keyboard-active .charItem.center { font-size: 4rem; }
-      body.mode-character.keyboard-active .charItem.next { font-size: 2rem; left: 75%; }
-      body.mode-character.keyboard-active .charItem.next2 { font-size: 1.5rem; left: 90%; }
+      
+      /* Scale down char font sizes to fit */
+      body.mode-character.keyboard-active .charItem.center { font-size: 4rem; z-index: 10;}
+      body.mode-character.keyboard-active .charItem.next { font-size: 2rem; left: 75%; z-index: 5; }
+      body.mode-character.keyboard-active .charItem.next2 { font-size: 1.5rem; left: 90%; z-index: 1; }
       
       /* Move stats to top */
       body.mode-character.keyboard-active .stats-bar {
         order: -1;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      /* Keep Options Bar VISIBLE but smaller */
+      body.keyboard-active .options-bar {
+        margin-bottom: 0.5rem;
+        transform: scale(0.9);
       }
       
       /* Ensure strict hiding of other modes */
