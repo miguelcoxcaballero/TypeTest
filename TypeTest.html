@@ -2,341 +2,585 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Typing Test – Dual Mode Carousel</title>
-  <!-- Google Fonts for a modern look -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Typing Test – Inhouse Software</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;700&family=Inter:wght@300;400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+
   <style>
-    /* ========= GLOBAL & RESET ========= */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    /* ========= VARS & RESET ========= */
+    :root {
+      --bg-color: #050505;
+      --card-bg: #141414;
+      --card-border: #333333;
+      --text-main: #f5f5f0;
+      --text-muted: #888888;
+      /* Accent Color for UI */
+      --accent-color: #66BB6A;
+      --accent-glow: rgba(102, 187, 106, 0.3);
+      /* Accent Color for Logo */
+      --accent-copper: #d97736;
+      
+      --success: #66BB6A;
+      --error: #EF5350;
+      --font-logo: 'Comfortaa', cursive;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
     body {
-      background-color: #121212;
-      color: #E0E0E0;
-      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, var(--bg-color) 70%);
+      color: var(--text-main);
+      font-family: var(--font-body);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 1rem;
+      overflow-x: hidden;
     }
+
+    /* ========= LAYOUT ========= */
     .container {
-      background: #1E1E1E;
-      padding: 2rem 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       width: 100%;
       max-width: 900px;
       text-align: center;
       position: relative;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      z-index: 10;
     }
+
+    /* ========= BRANDING FOOTER ========= */
+    .brand-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 3rem; /* Space from the main box */
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+    .brand-footer:hover {
+      opacity: 1;
+    }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      stroke: var(--accent-copper);
+      fill: none;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 10px rgba(217, 119, 54, 0.3));
+    }
+    .brand-name {
+      font-family: var(--font-logo);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    /* ========= TYPOGRAPHY ========= */
     h1 {
-      margin-bottom: 1rem;
-      font-size: 2.4rem;
-      font-weight: 700;
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
     }
-    p.notice {
-      font-size: 1rem;
-      margin-top: 1rem;
-      opacity: 0.8;
+    p { color: var(--text-muted); line-height: 1.6; }
+    
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      padding: 1rem;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      font-family: var(--font-mono);
+      border: 1px solid rgba(255,255,255,0.05);
     }
-    .stats {
-      font-size: 1.3rem;
-      margin: 10px 0;
+    .stat-item {
+      display: flex;
+      flex-direction: column;
     }
-    /* ========= MODE CONTAINERS ========= */
-    .mode {
-      display: none;
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); }
+
+    /* ========= INTERACTIVE ELEMENTS ========= */
+    .mode-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
     }
-    /* Landing Page */
-    #landingPage {
-      display: block;
+    
+    .mode-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      padding: 1.5rem;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
     }
-    /* ========= Write Mode Styles ========= */
-    #writeMode .timer {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
+    .mode-btn:hover {
+      background: rgba(102, 187, 106, 0.1);
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+    .mode-btn span { font-size: 2rem; color: var(--accent-color); }
+    .mode-btn h3 { font-size: 1.1rem; font-weight: 600; }
+    .mode-btn small { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* ========= WRITE MODE ========= */
+    #writeMode .test-area {
+      position: relative;
+      background: rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      min-height: 160px;
+      cursor: text;
+      text-align: left;
     }
     #writeMode .test-text {
-      font-size: 1.6rem;
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
       line-height: 2rem;
-      margin: 1.5rem 0;
-      text-align: left;
-      font-family: 'Roboto Mono', monospace;
-      position: relative; /* For the absolute-positioned cursor */
+      color: var(--text-muted);
+      word-break: break-word;
     }
-    /* Each word is wrapped in its own span.
-       A trailing space is appended inside the word so that a line break never starts with a space. */
-    #writeMode .word {
-      white-space: pre-wrap;
-      display: inline-block;
-    }
-    /* Each letter is an inline-block with fixed width and top alignment */
-    #writeMode .letter {
-      display: inline-block;
-      width: 1ch;
-      border-left: 2px solid transparent;
-      vertical-align: top;
-    }
-    #writeMode .correct {
-      color: #66BB6A;
-    }
-    #writeMode .incorrect {
-      color: #EF5350;
-    }
-    /* Dedicated blinking cursor element inside the test text container */
+    .word { display: inline-block; margin-right: 0.2ch; }
+    .letter { position: relative; }
+    .letter.correct { color: var(--text-main); }
+    .letter.incorrect { color: var(--error); text-decoration: underline; }
+    
+    /* Smooth Caret */
     #cursor {
       position: absolute;
       width: 2px;
-      background-color: #66BB6A;
-      animation: blink 1s steps(2, start) infinite;
-      transition: left 0.2s ease, top 0.2s ease;
+      /* Reduced height for better fit */
+      height: 1.2em; 
+      background-color: var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-color);
+      transition: all 0.1s ease-out;
+      pointer-events: none;
+      z-index: 10;
     }
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-    /* ========= Character Mode Styles ========= */
-    /* Carousel container for the characters */
+
+    /* ========= CHARACTER MODE ========= */
     #charCarousel {
       position: relative;
-      width: 100%;
-      height: 220px;
+      height: 180px;
       margin: 20px 0;
+      overflow: hidden;
+      /* Adjusted mask to ensure right-side items are visible */
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     }
-    /* Each carousel item is absolutely positioned.
-       Transition now only affects left and opacity. */
     .charItem {
       position: absolute;
       top: 50%;
-      text-align: center;
-      transition: left 0.2s ease, opacity 0.2s ease;
-      font-family: 'Roboto Mono', monospace;
-    }
-    /* Center item – the one to type */
-    .charItem.center {
       left: 50%;
-      transform: translate(-50%, -50%) scale(1);
-      font-size: 10rem;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    /* Next preview (smaller) */
-    .charItem.next {
-      left: 65%;
-      transform: translate(-50%, -50%) scale(0.7);
-      font-size: 10rem;
+    .charItem.center { font-size: 8rem; color: var(--text-main); opacity: 1; z-index: 3; }
+    
+    /* Adjusted positions to bring characters closer together */
+    .charItem.next { 
+      font-size: 4rem; 
+      color: var(--text-muted); 
+      opacity: 0.6; 
+      left: 68%; /* Brought closer from 75% */
+      z-index: 2; 
     }
-    /* Next2 preview (smallest) */
-    .charItem.next2 {
-      left: 75%;
-      transform: translate(-50%, -50%) scale(0.5);
-      font-size: 10rem;
+    .charItem.next2 { 
+      font-size: 2.5rem; 
+      color: var(--text-muted); 
+      opacity: 0.3; 
+      left: 82%; /* Brought closer from 90% */
+      z-index: 1; 
     }
-    /* Finger diagram (horizontal, curved) */
+    
+    /* New entry state for smooth fade-in */
+    .charItem.enter {
+      font-size: 2.5rem;
+      color: var(--text-muted);
+      opacity: 0;
+      left: 100%;
+      z-index: 0;
+    }
+    
+    /* Animation state for incorrect */
+    .charItem.shake { animation: shake 0.3s ease-in-out; color: var(--error) !important; }
+    
+    @keyframes shake {
+      0%, 100% { transform: translate(-50%, -50%); }
+      25% { transform: translate(calc(-50% - 10px), -50%); }
+      75% { transform: translate(calc(-50% + 10px), -50%); }
+    }
+
+    /* Finger Diagram - Mobile Friendly */
     .finger-diagram {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 4px;
+      margin-top: 2rem;
+      flex-wrap: wrap;
     }
-    /* Speed up the finger diagram transitions */
     .finger {
-      padding: 5px 10px;
-      border: 1px solid #E0E0E0;
-      border-radius: 4px;
-      font-size: 1rem;
-      opacity: 0.5;
-      transition: opacity 0.1s, background-color 0.1s, color 0.1s;
+      padding: 6px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      font-family: var(--font-mono);
     }
     .finger.active {
-      opacity: 1;
-      background-color: #66BB6A;
-      color: #121212;
+      background: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px var(--accent-glow);
     }
-    /* Curved effect for left-hand fingers */
-    #characterMode .finger[data-finger="left-pinky"] {
-      transform: translateY(10px);
+
+    /* Custom Checkbox */
+    .options-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
-    #characterMode .finger[data-finger="left-ring"]  {
-      transform: translateY(5px);
-    }
-    #characterMode .finger[data-finger="left-middle"]{
-      transform: translateY(-5px);
-    }
-    #characterMode .finger[data-finger="left-index"] {
-      transform: translateY(0);
-    }
-    /* Curved effect for right-hand fingers */
-    #characterMode .finger[data-finger="right-index"] {
-      transform: translateY(0);
-    }
-    #characterMode .finger[data-finger="right-middle"]{
-      transform: translateY(-5px);
-    }
-    #characterMode .finger[data-finger="right-ring"]  {
-      transform: translateY(5px);
-    }
-    #characterMode .finger[data-finger="right-pinky"] {
-      transform: translateY(10px);
-    }
-    /* ========= Custom Checkbox Styles ========= */
     .custom-checkbox {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      font-size: 1rem;
+      gap: 8px;
       cursor: pointer;
-      user-select: none;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      transition: 0.2s;
     }
-    .custom-checkbox input[type="checkbox"] {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #E0E0E0;
-      border-radius: 3px;
-      margin-right: 8px;
+    .custom-checkbox:hover { background: rgba(255,255,255,0.06); }
+    .custom-checkbox input { display: none; }
+    .checkbox-box {
+      width: 18px; height: 18px;
+      border: 2px solid var(--text-muted);
+      border-radius: 4px;
       position: relative;
+      transition: 0.2s;
     }
-    .custom-checkbox input[type="checkbox"]:checked {
-      background-color: #66BB6A;
-      border-color: #66BB6A;
+    .custom-checkbox input:checked + .checkbox-box {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
     }
-    .custom-checkbox input[type="checkbox"]:checked::after {
-      content: "";
+    .custom-checkbox input:checked + .checkbox-box::after {
+      content: '';
       position: absolute;
-      left: 4px;
-      top: 0px;
-      width: 4px;
-      height: 8px;
-      border: solid #121212;
+      left: 5px; top: 1px;
+      width: 4px; height: 9px;
+      border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
+    }
+
+    /* HIDDEN INPUT FOR MOBILE KEYBOARD */
+    #mobileInput {
+      position: absolute;
+      opacity: 0;
+      top: -1000px;
+    }
+    
+    /* Mobile Overlay for keyboard trigger */
+    .mobile-tap-area {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      cursor: text;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 8px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem 1rem; border-radius: 0; min-height: 100vh; border: none; display: flex; flex-direction: column; justify-content: center; }
+      h1 { font-size: 1.6rem; }
+      .mode-selector { grid-template-columns: 1fr; }
+      .finger-diagram { display: none; /* Hide fingers on small mobile to save space */ }
+      .charItem.center { font-size: 5rem; }
+      #writeMode .test-text { font-size: 1.1rem; }
+      .back-btn { top: 10px; left: 10px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Hidden Input for Mobile Compatibility -->
+  <input type="text" id="mobileInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
   <div class="container">
+    
     <!-- Landing Page -->
-    <div id="landingPage" class="mode">
+    <div id="landingPage">
       <h1>Typing Test</h1>
-      <p>Press <strong>W</strong> for Write Mode</p>
-      <p>Press <strong>C</strong> for Character Mode</p>
-      <p class="notice">(Press Esc in any mode to return here)</p>
+      <p style="margin-bottom: 2rem;">Test your speed and accuracy.</p>
+      
+      <div class="mode-selector">
+        <div class="mode-btn" onclick="setMode('write')">
+          <span class="material-symbols-rounded">article</span>
+          <h3>Write Mode</h3>
+          <small>Press W</small>
+        </div>
+        <div class="mode-btn" onclick="setMode('character')">
+          <span class="material-symbols-rounded">keyboard</span>
+          <h3>Character Mode</h3>
+          <small>Press C</small>
+        </div>
+      </div>
+      
+      <p style="font-size: 0.85rem; opacity: 0.5;">Use physical keyboard or tap to type on mobile.</p>
     </div>
 
     <!-- Write Mode -->
-    <div id="writeMode" class="mode">
-      <h1>Write Mode</h1>
-      <div class="timer" id="writeTimer">30</div>
-      <div class="test-text" id="writeTestText"></div>
-      <div class="stats" id="writeStats">WPM: 0 | Accuracy: 0%</div>
-      <p id="writeNotice" class="notice">Start typing! (Press Space to restart after test)</p>
+    <div id="writeMode" style="display: none;">
+      <button class="back-btn" onclick="setMode('landing')">
+        <span class="material-symbols-rounded" style="font-size:18px;">arrow_back</span> Back
+      </button>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">Time</span>
+          <span class="stat-value" id="writeTimer">30</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">WPM</span>
+          <span class="stat-value" id="writeWpm">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="writeAcc">100%</span>
+        </div>
+      </div>
+
+      <div class="test-area" id="writeArea">
+        <div class="mobile-tap-area" onclick="focusInput()"></div>
+        <div id="cursor"></div>
+        <div class="test-text" id="writeTestText"></div>
+      </div>
+      
+      <p id="writeNotice" style="margin-top: 1.5rem; font-size: 0.9rem;">Tap text to start typing</p>
     </div>
 
     <!-- Character Mode -->
-    <div id="characterMode" class="mode">
-      <h1>Character Mode</h1>
-      <!-- Options -->
-      <div id="charOptions" style="margin-bottom: 10px;">
+    <div id="characterMode" style="display: none;">
+      <button class="back-btn" onclick="setMode('landing')">
+        <span class="material-symbols-rounded" style="font-size:18px;">arrow_back</span> Back
+      </button>
+
+      <div class="options-bar">
         <label class="custom-checkbox">
           <input type="checkbox" id="includeNumbersCheckbox" checked>
+          <span class="checkbox-box"></span>
           Include Numbers
         </label>
       </div>
-      <!-- Carousel Container -->
-      <div id="charCarousel"></div>
-      <!-- New Stats Display for Character Mode -->
-      <div class="stats" id="charStats">WPM: 0 | CPS: 0</div>
-      <!-- Finger Diagram -->
-      <div id="fingerDiagram" class="finger-diagram">
-        <div class="finger" data-finger="left-pinky">LP</div>
-        <div class="finger" data-finger="left-ring">LR</div>
-        <div class="finger" data-finger="left-middle">LM</div>
-        <div class="finger" data-finger="left-index">LI</div>
-        <div class="finger" data-finger="right-index">RI</div>
-        <div class="finger" data-finger="right-middle">RM</div>
-        <div class="finger" data-finger="right-ring">RR</div>
-        <div class="finger" data-finger="right-pinky">RP</div>
+
+      <!-- Helper to focus keyboard on mobile -->
+      <div style="position:relative;" onclick="focusInput()">
+        <div id="charCarousel"></div>
       </div>
-      <p id="charNotice" class="notice">Type the character shown (Press "-" to toggle Include Numbers)</p>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">WPM</span>
+          <span class="stat-value" id="charWpm">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">CPS</span>
+          <span class="stat-value" id="charCps">0.00</span>
+        </div>
+      </div>
+
+      <div id="fingerDiagram" class="finger-diagram">
+        <div class="finger" data-finger="left-pinky">Left Pinky</div>
+        <div class="finger" data-finger="left-ring">L-Ring</div>
+        <div class="finger" data-finger="left-middle">L-Mid</div>
+        <div class="finger" data-finger="left-index">L-Index</div>
+        <div class="finger" data-finger="right-index">R-Index</div>
+        <div class="finger" data-finger="right-middle">R-Mid</div>
+        <div class="finger" data-finger="right-ring">R-Ring</div>
+        <div class="finger" data-finger="right-pinky">R-Pinky</div>
+      </div>
+      
+      <p id="charNotice" style="margin-top: 1.5rem; font-size: 0.9rem;">Tap letter to start typing</p>
     </div>
+
+  </div>
+
+  <!-- Branding Moved Out of Box -->
+  <div class="brand-footer">
+    <svg class="brand-logo" viewBox="0 0 100 60">
+        <path d="M5 55 L50 10 L95 55" />
+    </svg>
+    <span class="brand-name">inhouse software</span>
   </div>
 
   <script>
     /*******************************************
-     * Dual Mode Typing Test (Keyboard Only)
+     * Dual Mode Typing Test (Mobile Friendly)
      *******************************************/
     
-    // ----- GLOBAL MODE MANAGEMENT -----
-    let currentMode = "landing"; // "landing", "write", "character"
+    // ----- GLOBAL VARS & HELPERS -----
+    let currentMode = "landing";
+    const mobileInput = document.getElementById("mobileInput");
     
+    // Focus helper for mobile keyboards
+    function focusInput() {
+      mobileInput.focus();
+      // On mobile, sometimes we need to reset value to avoid autocomplete weirdness
+      mobileInput.value = ""; 
+    }
+
     function setMode(mode) {
       currentMode = mode;
-      // Hide all mode containers.
       document.getElementById("landingPage").style.display = "none";
       document.getElementById("writeMode").style.display = "none";
       document.getElementById("characterMode").style.display = "none";
       
-      // Stop any mode-specific timers.
       stopWriteMode();
       if (charStatsInterval) {
         clearInterval(charStatsInterval);
         charStatsInterval = null;
       }
       
+      // Reset input for fresh start
+      mobileInput.value = "";
+      
       if (mode === "landing") {
         document.getElementById("landingPage").style.display = "block";
+        // Fix: Explicitly blur input so shortcuts work when returning to landing
+        mobileInput.blur();
       } else if (mode === "write") {
         document.getElementById("writeMode").style.display = "block";
         initWriteMode();
+        setTimeout(focusInput, 100); // Auto focus for convenience
       } else if (mode === "character") {
         document.getElementById("characterMode").style.display = "block";
         initCharacterMode();
+        setTimeout(focusInput, 100);
       }
     }
+
+    // --- EVENT LISTENERS ---
     
+    // 1. Physical Keyboard support
     document.addEventListener("keydown", function(e) {
-      // In any mode, pressing Escape returns to landing.
-      if (e.key === "Escape") {
-        setMode("landing");
-        return;
-      }
-      // In Character Mode, pressing "-" toggles the "Include Numbers" checkbox.
+      if (e.key === "Escape") { setMode("landing"); return; }
+      
+      // Prevent double handling if focused on input (Input event handles logic)
+      if (document.activeElement === mobileInput) return;
+
       if (currentMode === "character" && e.key === "-") {
-        const checkbox = document.getElementById("includeNumbersCheckbox");
-        checkbox.checked = !checkbox.checked;
+        const cb = document.getElementById("includeNumbersCheckbox");
+        cb.checked = !cb.checked;
         initCharacterMode();
         return;
       }
-      // On landing page, check for mode selection keys.
+      
+      // Desktop shortcut keys on landing
       if (currentMode === "landing") {
         if (e.key.toLowerCase() === "w") {
-          setMode("write");
-          return;
+            setMode("write");
+            return; // Fix: Prevent fallthrough to write handler
         }
         if (e.key.toLowerCase() === "c") {
-          setMode("character");
-          return;
+            setMode("character");
+            return; // Fix: Prevent fallthrough to character handler
         }
       }
-      // Otherwise, pass event to mode-specific handlers.
-      if (currentMode === "write") {
-        handleWriteKey(e);
-      } else if (currentMode === "character") {
-        handleCharacterKey(e);
+      
+      // If not focused on hidden input (desktop usage), handle manually
+      if (currentMode === "write") handleWriteKey(e.key);
+      else if (currentMode === "character") handleCharacterKey(e.key);
+    });
+
+    // 2. Virtual Keyboard / Hidden Input support
+    mobileInput.addEventListener("input", (e) => {
+      // Get the last character typed
+      const val = mobileInput.value;
+      if (!val) return; // ignore empty (e.g. backspace handled differently)
+      
+      const char = val.slice(-1); // get last char
+      
+      if (currentMode === "write") handleWriteKey(char);
+      else if (currentMode === "character") handleCharacterKey(char);
+      
+      // Clear input to keep it clean for next char, but keep focus
+      mobileInput.value = ""; 
+    });
+
+    // Special handling for Backspace on mobile input
+    mobileInput.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace") {
+        if (currentMode === "write") handleWriteKey("Backspace");
+        // Character mode ignores backspace
       }
     });
-    
-    /* ========= WRITE MODE ========= */
+
+    /* ========= WRITE MODE LOGIC ========= */
     let writeCurrentText = "";
     let writeTypedText = "";
-    const writeTimerDuration = 30; // seconds
+    const writeTimerDuration = 30;
     let writeTimeLeft = writeTimerDuration;
     let writeTimerInterval = null;
     let writeTestStarted = false;
     let writeTestEnded = false;
-    let writeStartTime = null;  // For accurate WPM calculation
+    let writeStartTime = null;
     
     function generateParagraph(wordCount) {
       const wordPool = [
@@ -348,9 +592,7 @@
         'home','house','city','country','ocean','mountain','river','forest','desert','sky',
         'sun','moon','star','planet','space','universe','energy','force','power','light',
         'dark','wind','fire','earth','metal','glass','stone','wood','air','silver',
-        'gold','copper','iron','mercury','diamond','crystal','cloud','rain','snow','ice',
-        'storm','calm','whisper','echo','shadow','reflection','silence','sound','noise',
-        'chatter','breeze','wave','tide'
+        'gold','copper','iron','mercury','diamond','crystal','cloud','rain','snow','ice'
       ];
       let paragraph = [];
       for (let i = 0; i < wordCount; i++) {
@@ -360,8 +602,6 @@
       return paragraph.join(" ");
     }
     
-    // Render the paragraph so that each word (with its trailing space, if not last)
-    // is contained in a span. This ensures that a line break never starts with a space.
     function renderWriteTestText() {
       const container = document.getElementById("writeTestText");
       container.innerHTML = "";
@@ -369,61 +609,61 @@
       words.forEach((word, wIndex) => {
         const wordSpan = document.createElement("span");
         wordSpan.classList.add("word");
-        // Add each letter of the word.
         for (let i = 0; i < word.length; i++) {
           const letterSpan = document.createElement("span");
           letterSpan.classList.add("letter");
           letterSpan.textContent = word[i];
           wordSpan.appendChild(letterSpan);
         }
-        // If not the last word, append a trailing space inside the word span.
         if (wIndex < words.length - 1) {
           const spaceSpan = document.createElement("span");
           spaceSpan.classList.add("letter");
-          spaceSpan.textContent = " ";
+          spaceSpan.innerHTML = "&nbsp;"; // explicit space for width
           wordSpan.appendChild(spaceSpan);
         }
         container.appendChild(wordSpan);
       });
-      // Append the cursor element if not already present.
-      if (!document.getElementById("cursor")) {
-        const cursor = document.createElement("div");
-        cursor.id = "cursor";
-        container.appendChild(cursor);
-      }
-      updateCursorPosition();
+      // Force a slight delay to ensure layout is complete before positioning cursor
+      requestAnimationFrame(updateCursorPosition);
     }
     
-    // Update the position of the dedicated cursor element based on the current letter.
     function updateCursorPosition() {
       const letters = document.querySelectorAll("#writeTestText .letter");
       const cursor = document.getElementById("cursor");
+      
       if (writeTypedText.length < letters.length) {
         const currentLetter = letters[writeTypedText.length];
-        const containerRect = document.getElementById("writeTestText").getBoundingClientRect();
+        // Calculate relative position
+        const parentRect = document.getElementById("writeTestText").getBoundingClientRect();
         const letterRect = currentLetter.getBoundingClientRect();
-        // Calculate the position relative to the container.
-        const left = letterRect.left - containerRect.left;
-        const top = letterRect.top - containerRect.top;
-        cursor.style.left = left + "px";
-        cursor.style.top = top + "px";
-        cursor.style.height = letterRect.height + "px";
+        
+        // Get actual cursor height for centering
+        const cursorHeight = cursor.offsetHeight;
+        
+        // Center Vertically: Top + (SlotHeight - CursorHeight) / 2
+        const top = (letterRect.top - parentRect.top) + (letterRect.height - cursorHeight) / 2;
+        const left = letterRect.left - parentRect.left;
+        
+        cursor.style.transform = `translate(${left}px, ${top}px)`;
         cursor.style.opacity = 1;
       } else {
+        // End of text
         cursor.style.opacity = 0;
       }
     }
     
-    // Update the statistics (WPM and accuracy) in Write Mode.
     function updateWriteStats() {
       const letters = document.querySelectorAll("#writeTestText .letter");
       let correctCount = 0;
+      
+      // Update visual classes
       for (let i = 0; i < letters.length; i++) {
-        const expected = letters[i].textContent;
+        const expected = letters[i].textContent.replace(/\u00a0/, " "); // handle nbsp
         const typedChar = writeTypedText[i];
-        letters[i].classList.remove("correct", "incorrect");
+        letters[i].className = "letter"; // reset
+        
         if (typedChar == null) {
-          // Not yet typed.
+          // untyped
         } else if (typedChar === expected) {
           letters[i].classList.add("correct");
           correctCount++;
@@ -431,14 +671,15 @@
           letters[i].classList.add("incorrect");
         }
       }
-      // Use the actual elapsed time.
+      
       let elapsed = 0;
-      if (writeStartTime) {
-        elapsed = (Date.now() - writeStartTime) / 1000;
-      }
-      const accuracy = writeTypedText.length ? Math.round((correctCount / writeTypedText.length) * 100) : 0;
+      if (writeStartTime) elapsed = (Date.now() - writeStartTime) / 1000;
+      
+      const accuracy = writeTypedText.length ? Math.round((correctCount / writeTypedText.length) * 100) : 100;
       const wpm = elapsed > 0 ? Math.round((correctCount / 5) / (elapsed / 60)) : 0;
-      document.getElementById("writeStats").textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
+      
+      document.getElementById("writeWpm").textContent = wpm;
+      document.getElementById("writeAcc").textContent = accuracy + "%";
     }
     
     function startWriteTimer() {
@@ -454,7 +695,8 @@
     function endWriteMode() {
       clearInterval(writeTimerInterval);
       writeTestEnded = true;
-      document.getElementById("writeNotice").textContent = "Test over – Press Space to restart";
+      document.getElementById("writeNotice").textContent = "Test over – Tap restart or press Space";
+      mobileInput.blur(); // Hide keyboard
     }
     
     function stopWriteMode() {
@@ -462,52 +704,53 @@
     }
     
     function initWriteMode() {
-      writeCurrentText = generateParagraph(50);
+      writeCurrentText = generateParagraph(40);
       writeTypedText = "";
       writeTimeLeft = writeTimerDuration;
       writeTestStarted = false;
       writeTestEnded = false;
       writeStartTime = null;
       document.getElementById("writeTimer").textContent = writeTimerDuration;
-      document.getElementById("writeNotice").textContent = "Start typing! (Press Space to restart after test)";
+      document.getElementById("writeWpm").textContent = "0";
+      document.getElementById("writeAcc").textContent = "100%";
+      document.getElementById("writeNotice").textContent = "Tap text to start typing";
       renderWriteTestText();
     }
     
-    // In Write Mode, handle key presses. If the test is over, pressing Space restarts it.
-    function handleWriteKey(e) {
-      // If test ended and user presses Space, restart.
-      if (writeTestEnded && e.key === " ") {
+    function handleWriteKey(key) {
+      if (writeTestEnded && key === " ") {
         initWriteMode();
         return;
       }
       if (writeTestEnded) return;
+      
       if (!writeTestStarted) {
         writeTestStarted = true;
         writeStartTime = Date.now();
         startWriteTimer();
       }
-      if (e.key === "Backspace") {
+      
+      if (key === "Backspace") {
         writeTypedText = writeTypedText.slice(0, -1);
-      } else if (e.key.length === 1) {
-        writeTypedText += e.key;
+      } else if (key.length === 1) {
+        writeTypedText += key;
       }
+      
+      updateWriteStats(); // This handles visual updates too
       updateCursorPosition();
-      updateWriteStats();
+      
       const totalLetters = document.querySelectorAll("#writeTestText .letter").length;
-      if (writeTypedText.length >= totalLetters) {
-        endWriteMode();
-      }
+      if (writeTypedText.length >= totalLetters) endWriteMode();
     }
     
-    /* ========= CHARACTER MODE (Carousel) ========= */
-    // Global variables for Character Mode stats.
+    /* ========= CHARACTER MODE LOGIC ========= */
     let charTestStarted = false;
     let charStartTime = null;
     let charCorrectCount = 0;
-    let charLastKeyTime = null; // Timestamp of last correct key press
+    let charLastKeyTime = null;
     let charStatsInterval = null;
+    let charQueue = [];
     
-    // Return allowed characters based on the "Include Numbers" checkbox.
     function getAllowedChars() {
       const includeNumbers = document.getElementById("includeNumbersCheckbox").checked;
       return includeNumbers ? "abcdefghijklmnopqrstuvwxyz0123456789" : "abcdefghijklmnopqrstuvwxyz";
@@ -515,58 +758,57 @@
     
     function getRandomChar() {
       const chars = getAllowedChars();
-      const idx = Math.floor(Math.random() * chars.length);
-      return chars[idx];
+      return chars[Math.floor(Math.random() * chars.length)];
     }
     
-    let charQueue = []; // holds at least three characters
-    
-    // Render the carousel with three items.
     function renderCarousel() {
       const container = document.getElementById("charCarousel");
       container.innerHTML = "";
-      // Create center item.
+      
       const item0 = document.createElement("div");
       item0.className = "charItem center";
       item0.textContent = charQueue[0].toUpperCase();
-      // Create next item.
+      
       const item1 = document.createElement("div");
       item1.className = "charItem next";
       item1.textContent = charQueue[1].toUpperCase();
-      // Create next2 item.
+      
       const item2 = document.createElement("div");
       item2.className = "charItem next2";
       item2.textContent = charQueue[2].toUpperCase();
+      
       container.appendChild(item0);
       container.appendChild(item1);
       container.appendChild(item2);
+      
       updateFingerDiagram(charQueue[0]);
     }
     
-    // Update Character Mode stats (WPM and CPS) continuously.
     function updateCharStatsContinuous() {
-      // If the test hasn't started, do nothing.
       if (!charTestStarted) return;
       const now = Date.now();
-      // If more than 3 seconds have passed since the last correct key press,
-      // reset the counters and display "paused" in yellow.
+      
+      // Pause detection (3s inactive)
       if (now - charLastKeyTime > 3000) {
         charTestStarted = false;
         charStartTime = null;
         charCorrectCount = 0;
-        document.getElementById("charStats").textContent = "paused";
-        document.getElementById("charStats").style.color = "yellow";
+        const wpmEl = document.getElementById("charWpm");
+        wpmEl.textContent = "0";
+        wpmEl.style.color = "var(--text-muted)";
         return;
       } else {
-        document.getElementById("charStats").style.color = "";
+        document.getElementById("charWpm").style.color = "var(--accent-color)";
       }
+      
       const elapsed = (now - charStartTime) / 1000;
       const cps = elapsed > 0 ? (charCorrectCount / elapsed).toFixed(2) : "0.00";
-      const wpm = elapsed > 0 ? ((charCorrectCount / 5) / (elapsed / 60)).toFixed(2) : "0.00";
-      document.getElementById("charStats").textContent = `WPM: ${wpm} | CPS: ${cps}`;
+      const wpm = elapsed > 0 ? ((charCorrectCount / 5) / (elapsed / 60)).toFixed(0) : "0";
+      
+      document.getElementById("charWpm").textContent = wpm;
+      document.getElementById("charCps").textContent = cps;
     }
     
-    // Initialize Character Mode: set up the carousel with three random characters and reset stats.
     function initCharacterMode() {
       charQueue = [getRandomChar(), getRandomChar(), getRandomChar()];
       renderCarousel();
@@ -574,66 +816,69 @@
       charStartTime = null;
       charCorrectCount = 0;
       charLastKeyTime = null;
-      document.getElementById("charStats").textContent = "WPM: 0 | CPS: 0";
-      document.getElementById("charStats").style.color = "";
-      document.getElementById("charNotice").textContent = "Type the character shown (Press '-' to toggle Include Numbers)";
-      // Start the continuous update timer for stats.
+      document.getElementById("charWpm").textContent = "0";
+      document.getElementById("charCps").textContent = "0.00";
+      
       if (charStatsInterval) clearInterval(charStatsInterval);
       charStatsInterval = setInterval(updateCharStatsContinuous, 100);
     }
     
-    // When a key is pressed in Character Mode.
-    function handleCharacterKey(e) {
-      if (e.key.length === 1) {
-        // Start the timer if this is the first correct key press.
-        if (!charTestStarted) {
-          charTestStarted = true;
-          charStartTime = Date.now();
-        }
-        // Update the timestamp on every key press.
-        charLastKeyTime = Date.now();
-        if (e.key.toLowerCase() === charQueue[0].toLowerCase()) {
-          charCorrectCount++;
-          shiftCarousel();
-        } else {
-          // Flash red if incorrect.
-          const container = document.getElementById("charCarousel");
-          const centerItem = container.querySelector(".charItem.center");
-          centerItem.style.color = "#EF5350";
-          setTimeout(() => {
-            centerItem.style.color = "#E0E0E0";
-          }, 200);
-        }
+    function handleCharacterKey(key) {
+      if (key.length !== 1) return;
+      
+      if (!charTestStarted) {
+        charTestStarted = true;
+        charStartTime = Date.now();
+      }
+      charLastKeyTime = Date.now();
+      
+      if (key.toLowerCase() === charQueue[0].toLowerCase()) {
+        charCorrectCount++;
+        shiftCarousel();
+      } else {
+        // Shake effect
+        const centerItem = document.querySelector(".charItem.center");
+        centerItem.classList.remove("shake");
+        void centerItem.offsetWidth; // trigger reflow
+        centerItem.classList.add("shake");
       }
     }
     
-    // Immediately shift the carousel once the correct character is typed.
     function shiftCarousel() {
       const container = document.getElementById("charCarousel");
       if (container.children.length < 3) return;
-      // Remove the current center item immediately.
+      
+      // Animate out
       container.removeChild(container.children[0]);
-      // Promote the next item to center.
+      
       const newCenter = container.children[0];
       newCenter.classList.remove("next");
       newCenter.classList.add("center");
-      // Promote the next2 item to next.
+      
       const newNext = container.children[1];
       newNext.classList.remove("next2");
       newNext.classList.add("next");
-      // Update the queue: remove the first character and add a new random one.
+      
       charQueue.shift();
       const newChar = getRandomChar();
       charQueue.push(newChar);
-      // Create a new next2 element.
+      
       const newItem = document.createElement("div");
-      newItem.className = "charItem next2";
+      // Start in 'enter' state (off-screen right)
+      newItem.className = "charItem enter"; 
       newItem.textContent = newChar.toUpperCase();
       container.appendChild(newItem);
+      
+      // Force reflow to ensure the 'enter' state is applied before transitioning
+      void newItem.offsetWidth; 
+      
+      // Transition to final 'next2' position
+      newItem.classList.remove("enter");
+      newItem.classList.add("next2");
+      
       updateFingerDiagram(charQueue[0]);
     }
     
-    // Update the finger diagram based on the current (center) character.
     const fingerMapping = {
       'q': 'left-pinky', 'a': 'left-pinky', 'z': 'left-pinky', '1': 'left-pinky',
       'w': 'left-ring',  's': 'left-ring',  'x': 'left-ring',  '2': 'left-ring',
@@ -653,19 +898,922 @@
       const fingerKey = fingerMapping[ch.toLowerCase()];
       if (fingerKey) {
         const activeFinger = document.querySelector(`#fingerDiagram .finger[data-finger="${fingerKey}"]`);
-        if (activeFinger) {
-          activeFinger.classList.add("active");
-        }
+        if (activeFinger) activeFinger.classList.add("active");
       }
     }
     
-    /* ========= INITIALIZATION ========= */
+    // Init
+    document.getElementById("includeNumbersCheckbox").addEventListener("change", initCharacterMode);
     setMode("landing");
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Typing Test – Inhouse Software</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;700&family=Inter:wght@300;400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <style>
+    /* ========= VARS & RESET ========= */
+    :root {
+      --bg-color: #050505;
+      --card-bg: #141414;
+      --card-border: #333333;
+      --text-main: #f5f5f0;
+      --text-muted: #888888;
+      /* Accent Color for UI */
+      --accent-color: #66BB6A;
+      --accent-glow: rgba(102, 187, 106, 0.3);
+      /* Accent Color for Logo */
+      --accent-copper: #d97736;
+      
+      --success: #66BB6A;
+      --error: #EF5350;
+      --font-logo: 'Comfortaa', cursive;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, var(--bg-color) 70%);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+      overflow-x: hidden;
+    }
+
+    /* ========= LAYOUT ========= */
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    /* ========= BRANDING FOOTER ========= */
+    .brand-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 3rem; /* Space from the main box */
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+    .brand-footer:hover {
+      opacity: 1;
+    }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      stroke: var(--accent-copper);
+      fill: none;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 10px rgba(217, 119, 54, 0.3));
+    }
+    .brand-name {
+      font-family: var(--font-logo);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    /* ========= TYPOGRAPHY ========= */
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    p { color: var(--text-muted); line-height: 1.6; }
     
-    // Add a change event listener to the Include Numbers checkbox so that clicking it reinitializes Character Mode.
-    document.getElementById("includeNumbersCheckbox").addEventListener("change", function() {
-      initCharacterMode();
+    .stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      padding: 1rem;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      font-family: var(--font-mono);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); }
+
+    /* ========= INTERACTIVE ELEMENTS ========= */
+    .mode-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    
+    .mode-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      padding: 1.5rem;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .mode-btn:hover {
+      background: rgba(102, 187, 106, 0.1);
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+    .mode-btn span { font-size: 2rem; color: var(--accent-color); }
+    .mode-btn h3 { font-size: 1.1rem; font-weight: 600; }
+    .mode-btn small { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* ========= WRITE MODE ========= */
+    #writeMode .test-area {
+      position: relative;
+      background: rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      min-height: 160px;
+      cursor: text;
+      text-align: left;
+    }
+    #writeMode .test-text {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      line-height: 2rem;
+      color: var(--text-muted);
+      word-break: break-word;
+    }
+    .word { display: inline-block; margin-right: 0.2ch; }
+    .letter { position: relative; }
+    .letter.correct { color: var(--text-main); }
+    .letter.incorrect { color: var(--error); text-decoration: underline; }
+    
+    /* Smooth Caret */
+    #cursor {
+      position: absolute;
+      width: 2px;
+      /* Reduced height for better fit */
+      height: 1.2em; 
+      background-color: var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-color);
+      transition: all 0.1s ease-out;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ========= CHARACTER MODE ========= */
+    #charCarousel {
+      position: relative;
+      height: 180px;
+      margin: 20px 0;
+      overflow: hidden;
+      /* Adjusted mask to ensure right-side items are visible */
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+    .charItem {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .charItem.center { font-size: 8rem; color: var(--text-main); opacity: 1; z-index: 3; }
+    
+    /* Adjusted positions to bring characters closer together */
+    .charItem.next { 
+      font-size: 4rem; 
+      color: var(--text-muted); 
+      opacity: 0.6; 
+      left: 68%; /* Brought closer from 75% */
+      z-index: 2; 
+    }
+    .charItem.next2 { 
+      font-size: 2.5rem; 
+      color: var(--text-muted); 
+      opacity: 0.3; 
+      left: 82%; /* Brought closer from 90% */
+      z-index: 1; 
+    }
+    
+    /* New entry state for smooth fade-in */
+    .charItem.enter {
+      font-size: 2.5rem;
+      color: var(--text-muted);
+      opacity: 0;
+      left: 100%;
+      z-index: 0;
+    }
+    
+    /* Animation state for incorrect */
+    .charItem.shake { animation: shake 0.3s ease-in-out; color: var(--error) !important; }
+    
+    @keyframes shake {
+      0%, 100% { transform: translate(-50%, -50%); }
+      25% { transform: translate(calc(-50% - 10px), -50%); }
+      75% { transform: translate(calc(-50% + 10px), -50%); }
+    }
+
+    /* Finger Diagram - Mobile Friendly */
+    .finger-diagram {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    .finger {
+      padding: 6px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      font-family: var(--font-mono);
+    }
+    .finger.active {
+      background: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Custom Checkbox */
+    .options-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .custom-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      transition: 0.2s;
+    }
+    .custom-checkbox:hover { background: rgba(255,255,255,0.06); }
+    .custom-checkbox input { display: none; }
+    .checkbox-box {
+      width: 18px; height: 18px;
+      border: 2px solid var(--text-muted);
+      border-radius: 4px;
+      position: relative;
+      transition: 0.2s;
+    }
+    .custom-checkbox input:checked + .checkbox-box {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+    .custom-checkbox input:checked + .checkbox-box::after {
+      content: '';
+      position: absolute;
+      left: 5px; top: 1px;
+      width: 4px; height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* HIDDEN INPUT FOR MOBILE KEYBOARD */
+    #mobileInput {
+      position: absolute;
+      opacity: 0;
+      top: -1000px;
+    }
+    
+    /* Mobile Overlay for keyboard trigger */
+    .mobile-tap-area {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      cursor: text;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 8px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem 1rem; border-radius: 0; min-height: 100vh; border: none; display: flex; flex-direction: column; justify-content: center; }
+      h1 { font-size: 1.6rem; }
+      .mode-selector { grid-template-columns: 1fr; }
+      .finger-diagram { display: none; /* Hide fingers on small mobile to save space */ }
+      .charItem.center { font-size: 5rem; }
+      #writeMode .test-text { font-size: 1.1rem; }
+      .back-btn { top: 10px; left: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden Input for Mobile Compatibility -->
+  <input type="text" id="mobileInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+  <div class="container">
+    
+    <!-- Landing Page -->
+    <div id="landingPage">
+      <h1>Typing Test</h1>
+      <p style="margin-bottom: 2rem;">Test your speed and accuracy.</p>
+      
+      <div class="mode-selector">
+        <div class="mode-btn" onclick="setMode('write')">
+          <span class="material-symbols-rounded">article</span>
+          <h3>Write Mode</h3>
+          <small>Press W</small>
+        </div>
+        <div class="mode-btn" onclick="setMode('character')">
+          <span class="material-symbols-rounded">keyboard</span>
+          <h3>Character Mode</h3>
+          <small>Press C</small>
+        </div>
+      </div>
+      
+      <p style="font-size: 0.85rem; opacity: 0.5;">Use physical keyboard or tap to type on mobile.</p>
+    </div>
+
+    <!-- Write Mode -->
+    <div id="writeMode" style="display: none;">
+      <button class="back-btn" onclick="setMode('landing')">
+        <span class="material-symbols-rounded" style="font-size:18px;">arrow_back</span> Back
+      </button>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">Time</span>
+          <span class="stat-value" id="writeTimer">30</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">WPM</span>
+          <span class="stat-value" id="writeWpm">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="writeAcc">100%</span>
+        </div>
+      </div>
+
+      <div class="test-area" id="writeArea">
+        <div class="mobile-tap-area" onclick="focusInput()"></div>
+        <div id="cursor"></div>
+        <div class="test-text" id="writeTestText"></div>
+      </div>
+      
+      <p id="writeNotice" style="margin-top: 1.5rem; font-size: 0.9rem;">Tap text to start typing</p>
+    </div>
+
+    <!-- Character Mode -->
+    <div id="characterMode" style="display: none;">
+      <button class="back-btn" onclick="setMode('landing')">
+        <span class="material-symbols-rounded" style="font-size:18px;">arrow_back</span> Back
+      </button>
+
+      <div class="options-bar">
+        <label class="custom-checkbox">
+          <input type="checkbox" id="includeNumbersCheckbox" checked>
+          <span class="checkbox-box"></span>
+          Include Numbers
+        </label>
+      </div>
+
+      <!-- Helper to focus keyboard on mobile -->
+      <div style="position:relative;" onclick="focusInput()">
+        <div id="charCarousel"></div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">WPM</span>
+          <span class="stat-value" id="charWpm">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">CPS</span>
+          <span class="stat-value" id="charCps">0.00</span>
+        </div>
+      </div>
+
+      <div id="fingerDiagram" class="finger-diagram">
+        <div class="finger" data-finger="left-pinky">Left Pinky</div>
+        <div class="finger" data-finger="left-ring">L-Ring</div>
+        <div class="finger" data-finger="left-middle">L-Mid</div>
+        <div class="finger" data-finger="left-index">L-Index</div>
+        <div class="finger" data-finger="right-index">R-Index</div>
+        <div class="finger" data-finger="right-middle">R-Mid</div>
+        <div class="finger" data-finger="right-ring">R-Ring</div>
+        <div class="finger" data-finger="right-pinky">R-Pinky</div>
+      </div>
+      
+      <p id="charNotice" style="margin-top: 1.5rem; font-size: 0.9rem;">Tap letter to start typing</p>
+    </div>
+
+  </div>
+
+  <!-- Branding Moved Out of Box -->
+  <div class="brand-footer">
+    <svg class="brand-logo" viewBox="0 0 100 60">
+        <path d="M5 55 L50 10 L95 55" />
+    </svg>
+    <span class="brand-name">inhouse software</span>
+  </div>
+
+  <script>
+    /*******************************************
+     * Dual Mode Typing Test (Mobile Friendly)
+     *******************************************/
+    
+    // ----- GLOBAL VARS & HELPERS -----
+    let currentMode = "landing";
+    const mobileInput = document.getElementById("mobileInput");
+    
+    // Focus helper for mobile keyboards
+    function focusInput() {
+      mobileInput.focus();
+      // On mobile, sometimes we need to reset value to avoid autocomplete weirdness
+      mobileInput.value = ""; 
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById("landingPage").style.display = "none";
+      document.getElementById("writeMode").style.display = "none";
+      document.getElementById("characterMode").style.display = "none";
+      
+      stopWriteMode();
+      if (charStatsInterval) {
+        clearInterval(charStatsInterval);
+        charStatsInterval = null;
+      }
+      
+      // Reset input for fresh start
+      mobileInput.value = "";
+      
+      if (mode === "landing") {
+        document.getElementById("landingPage").style.display = "block";
+        // Fix: Explicitly blur input so shortcuts work when returning to landing
+        mobileInput.blur();
+      } else if (mode === "write") {
+        document.getElementById("writeMode").style.display = "block";
+        initWriteMode();
+        setTimeout(focusInput, 100); // Auto focus for convenience
+      } else if (mode === "character") {
+        document.getElementById("characterMode").style.display = "block";
+        initCharacterMode();
+        setTimeout(focusInput, 100);
+      }
+    }
+
+    // --- EVENT LISTENERS ---
+    
+    // 1. Physical Keyboard support
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") { setMode("landing"); return; }
+      
+      // Prevent double handling if focused on input (Input event handles logic)
+      if (document.activeElement === mobileInput) return;
+
+      if (currentMode === "character" && e.key === "-") {
+        const cb = document.getElementById("includeNumbersCheckbox");
+        cb.checked = !cb.checked;
+        initCharacterMode();
+        return;
+      }
+      
+      // Desktop shortcut keys on landing
+      if (currentMode === "landing") {
+        if (e.key.toLowerCase() === "w") {
+            setMode("write");
+            return; // Fix: Prevent fallthrough to write handler
+        }
+        if (e.key.toLowerCase() === "c") {
+            setMode("character");
+            return; // Fix: Prevent fallthrough to character handler
+        }
+      }
+      
+      // If not focused on hidden input (desktop usage), handle manually
+      if (currentMode === "write") handleWriteKey(e.key);
+      else if (currentMode === "character") handleCharacterKey(e.key);
     });
+
+    // 2. Virtual Keyboard / Hidden Input support
+    mobileInput.addEventListener("input", (e) => {
+      // Get the last character typed
+      const val = mobileInput.value;
+      if (!val) return; // ignore empty (e.g. backspace handled differently)
+      
+      const char = val.slice(-1); // get last char
+      
+      if (currentMode === "write") handleWriteKey(char);
+      else if (currentMode === "character") handleCharacterKey(char);
+      
+      // Clear input to keep it clean for next char, but keep focus
+      mobileInput.value = ""; 
+    });
+
+    // Special handling for Backspace on mobile input
+    mobileInput.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace") {
+        if (currentMode === "write") handleWriteKey("Backspace");
+        // Character mode ignores backspace
+      }
+    });
+
+    /* ========= WRITE MODE LOGIC ========= */
+    let writeCurrentText = "";
+    let writeTypedText = "";
+    const writeTimerDuration = 30;
+    let writeTimeLeft = writeTimerDuration;
+    let writeTimerInterval = null;
+    let writeTestStarted = false;
+    let writeTestEnded = false;
+    let writeStartTime = null;
+    
+    function generateParagraph(wordCount) {
+      const wordPool = [
+        'time','person','year','way','day','thing','man','world','life','hand',
+        'part','child','eye','woman','place','work','week','case','point','government',
+        'company','number','group','problem','fact','night','water','room','mother','area',
+        'money','story','friend','love','car','tree','computer','phone','code','program',
+        'design','language','art','music','video','film','photo','game','play','park',
+        'home','house','city','country','ocean','mountain','river','forest','desert','sky',
+        'sun','moon','star','planet','space','universe','energy','force','power','light',
+        'dark','wind','fire','earth','metal','glass','stone','wood','air','silver',
+        'gold','copper','iron','mercury','diamond','crystal','cloud','rain','snow','ice'
+      ];
+      let paragraph = [];
+      for (let i = 0; i < wordCount; i++) {
+        let randomWord = wordPool[Math.floor(Math.random() * wordPool.length)];
+        paragraph.push(randomWord);
+      }
+      return paragraph.join(" ");
+    }
+    
+    function renderWriteTestText() {
+      const container = document.getElementById("writeTestText");
+      container.innerHTML = "";
+      const words = writeCurrentText.split(" ");
+      words.forEach((word, wIndex) => {
+        const wordSpan = document.createElement("span");
+        wordSpan.classList.add("word");
+        for (let i = 0; i < word.length; i++) {
+          const letterSpan = document.createElement("span");
+          letterSpan.classList.add("letter");
+          letterSpan.textContent = word[i];
+          wordSpan.appendChild(letterSpan);
+        }
+        if (wIndex < words.length - 1) {
+          const spaceSpan = document.createElement("span");
+          spaceSpan.classList.add("letter");
+          spaceSpan.innerHTML = "&nbsp;"; // explicit space for width
+          wordSpan.appendChild(spaceSpan);
+        }
+        container.appendChild(wordSpan);
+      });
+      // Force a slight delay to ensure layout is complete before positioning cursor
+      requestAnimationFrame(updateCursorPosition);
+    }
+    
+    function updateCursorPosition() {
+      const letters = document.querySelectorAll("#writeTestText .letter");
+      const cursor = document.getElementById("cursor");
+      
+      if (writeTypedText.length < letters.length) {
+        const currentLetter = letters[writeTypedText.length];
+        // Calculate relative position
+        const parentRect = document.getElementById("writeTestText").getBoundingClientRect();
+        const letterRect = currentLetter.getBoundingClientRect();
+        
+        // Get actual cursor height for centering
+        const cursorHeight = cursor.offsetHeight;
+        
+        // Center Vertically: Top + (SlotHeight - CursorHeight) / 2
+        const top = (letterRect.top - parentRect.top) + (letterRect.height - cursorHeight) / 2;
+        const left = letterRect.left - parentRect.left;
+        
+        cursor.style.transform = `translate(${left}px, ${top}px)`;
+        cursor.style.opacity = 1;
+      } else {
+        // End of text
+        cursor.style.opacity = 0;
+      }
+    }
+    
+    function updateWriteStats() {
+      const letters = document.querySelectorAll("#writeTestText .letter");
+      let correctCount = 0;
+      
+      // Update visual classes
+      for (let i = 0; i < letters.length; i++) {
+        const expected = letters[i].textContent.replace(/\u00a0/, " "); // handle nbsp
+        const typedChar = writeTypedText[i];
+        letters[i].className = "letter"; // reset
+        
+        if (typedChar == null) {
+          // untyped
+        } else if (typedChar === expected) {
+          letters[i].classList.add("correct");
+          correctCount++;
+        } else {
+          letters[i].classList.add("incorrect");
+        }
+      }
+      
+      let elapsed = 0;
+      if (writeStartTime) elapsed = (Date.now() - writeStartTime) / 1000;
+      
+      const accuracy = writeTypedText.length ? Math.round((correctCount / writeTypedText.length) * 100) : 100;
+      const wpm = elapsed > 0 ? Math.round((correctCount / 5) / (elapsed / 60)) : 0;
+      
+      document.getElementById("writeWpm").textContent = wpm;
+      document.getElementById("writeAcc").textContent = accuracy + "%";
+    }
+    
+    function startWriteTimer() {
+      writeTimerInterval = setInterval(() => {
+        writeTimeLeft--;
+        document.getElementById("writeTimer").textContent = writeTimeLeft;
+        if (writeTimeLeft <= 0) {
+          endWriteMode();
+        }
+      }, 1000);
+    }
+    
+    function endWriteMode() {
+      clearInterval(writeTimerInterval);
+      writeTestEnded = true;
+      document.getElementById("writeNotice").textContent = "Test over – Tap restart or press Space";
+      mobileInput.blur(); // Hide keyboard
+    }
+    
+    function stopWriteMode() {
+      clearInterval(writeTimerInterval);
+    }
+    
+    function initWriteMode() {
+      writeCurrentText = generateParagraph(40);
+      writeTypedText = "";
+      writeTimeLeft = writeTimerDuration;
+      writeTestStarted = false;
+      writeTestEnded = false;
+      writeStartTime = null;
+      document.getElementById("writeTimer").textContent = writeTimerDuration;
+      document.getElementById("writeWpm").textContent = "0";
+      document.getElementById("writeAcc").textContent = "100%";
+      document.getElementById("writeNotice").textContent = "Tap text to start typing";
+      renderWriteTestText();
+    }
+    
+    function handleWriteKey(key) {
+      if (writeTestEnded && key === " ") {
+        initWriteMode();
+        return;
+      }
+      if (writeTestEnded) return;
+      
+      if (!writeTestStarted) {
+        writeTestStarted = true;
+        writeStartTime = Date.now();
+        startWriteTimer();
+      }
+      
+      if (key === "Backspace") {
+        writeTypedText = writeTypedText.slice(0, -1);
+      } else if (key.length === 1) {
+        writeTypedText += key;
+      }
+      
+      updateWriteStats(); // This handles visual updates too
+      updateCursorPosition();
+      
+      const totalLetters = document.querySelectorAll("#writeTestText .letter").length;
+      if (writeTypedText.length >= totalLetters) endWriteMode();
+    }
+    
+    /* ========= CHARACTER MODE LOGIC ========= */
+    let charTestStarted = false;
+    let charStartTime = null;
+    let charCorrectCount = 0;
+    let charLastKeyTime = null;
+    let charStatsInterval = null;
+    let charQueue = [];
+    
+    function getAllowedChars() {
+      const includeNumbers = document.getElementById("includeNumbersCheckbox").checked;
+      return includeNumbers ? "abcdefghijklmnopqrstuvwxyz0123456789" : "abcdefghijklmnopqrstuvwxyz";
+    }
+    
+    function getRandomChar() {
+      const chars = getAllowedChars();
+      return chars[Math.floor(Math.random() * chars.length)];
+    }
+    
+    function renderCarousel() {
+      const container = document.getElementById("charCarousel");
+      container.innerHTML = "";
+      
+      const item0 = document.createElement("div");
+      item0.className = "charItem center";
+      item0.textContent = charQueue[0].toUpperCase();
+      
+      const item1 = document.createElement("div");
+      item1.className = "charItem next";
+      item1.textContent = charQueue[1].toUpperCase();
+      
+      const item2 = document.createElement("div");
+      item2.className = "charItem next2";
+      item2.textContent = charQueue[2].toUpperCase();
+      
+      container.appendChild(item0);
+      container.appendChild(item1);
+      container.appendChild(item2);
+      
+      updateFingerDiagram(charQueue[0]);
+    }
+    
+    function updateCharStatsContinuous() {
+      if (!charTestStarted) return;
+      const now = Date.now();
+      
+      // Pause detection (3s inactive)
+      if (now - charLastKeyTime > 3000) {
+        charTestStarted = false;
+        charStartTime = null;
+        charCorrectCount = 0;
+        const wpmEl = document.getElementById("charWpm");
+        wpmEl.textContent = "0";
+        wpmEl.style.color = "var(--text-muted)";
+        return;
+      } else {
+        document.getElementById("charWpm").style.color = "var(--accent-color)";
+      }
+      
+      const elapsed = (now - charStartTime) / 1000;
+      const cps = elapsed > 0 ? (charCorrectCount / elapsed).toFixed(2) : "0.00";
+      const wpm = elapsed > 0 ? ((charCorrectCount / 5) / (elapsed / 60)).toFixed(0) : "0";
+      
+      document.getElementById("charWpm").textContent = wpm;
+      document.getElementById("charCps").textContent = cps;
+    }
+    
+    function initCharacterMode() {
+      charQueue = [getRandomChar(), getRandomChar(), getRandomChar()];
+      renderCarousel();
+      charTestStarted = false;
+      charStartTime = null;
+      charCorrectCount = 0;
+      charLastKeyTime = null;
+      document.getElementById("charWpm").textContent = "0";
+      document.getElementById("charCps").textContent = "0.00";
+      
+      if (charStatsInterval) clearInterval(charStatsInterval);
+      charStatsInterval = setInterval(updateCharStatsContinuous, 100);
+    }
+    
+    function handleCharacterKey(key) {
+      if (key.length !== 1) return;
+      
+      if (!charTestStarted) {
+        charTestStarted = true;
+        charStartTime = Date.now();
+      }
+      charLastKeyTime = Date.now();
+      
+      if (key.toLowerCase() === charQueue[0].toLowerCase()) {
+        charCorrectCount++;
+        shiftCarousel();
+      } else {
+        // Shake effect
+        const centerItem = document.querySelector(".charItem.center");
+        centerItem.classList.remove("shake");
+        void centerItem.offsetWidth; // trigger reflow
+        centerItem.classList.add("shake");
+      }
+    }
+    
+    function shiftCarousel() {
+      const container = document.getElementById("charCarousel");
+      if (container.children.length < 3) return;
+      
+      // Animate out
+      container.removeChild(container.children[0]);
+      
+      const newCenter = container.children[0];
+      newCenter.classList.remove("next");
+      newCenter.classList.add("center");
+      
+      const newNext = container.children[1];
+      newNext.classList.remove("next2");
+      newNext.classList.add("next");
+      
+      charQueue.shift();
+      const newChar = getRandomChar();
+      charQueue.push(newChar);
+      
+      const newItem = document.createElement("div");
+      // Start in 'enter' state (off-screen right)
+      newItem.className = "charItem enter"; 
+      newItem.textContent = newChar.toUpperCase();
+      container.appendChild(newItem);
+      
+      // Force reflow to ensure the 'enter' state is applied before transitioning
+      void newItem.offsetWidth; 
+      
+      // Transition to final 'next2' position
+      newItem.classList.remove("enter");
+      newItem.classList.add("next2");
+      
+      updateFingerDiagram(charQueue[0]);
+    }
+    
+    const fingerMapping = {
+      'q': 'left-pinky', 'a': 'left-pinky', 'z': 'left-pinky', '1': 'left-pinky',
+      'w': 'left-ring',  's': 'left-ring',  'x': 'left-ring',  '2': 'left-ring',
+      'e': 'left-middle','d': 'left-middle','c': 'left-middle','3': 'left-middle',
+      'r': 'left-index', 't': 'left-index','f': 'left-index','g': 'left-index',
+      'v': 'left-index','b': 'left-index','4': 'left-index','5': 'left-index',
+      'y': 'right-index','u': 'right-index','h': 'right-index','j': 'right-index',
+      'n': 'right-index','m': 'right-index','6': 'right-index','7': 'right-index',
+      'i': 'right-middle','k': 'right-middle','8': 'right-middle',
+      'o': 'right-ring', 'l': 'right-ring','9': 'right-ring',
+      'p': 'right-pinky','0': 'right-pinky'
+    };
+    
+    function updateFingerDiagram(ch) {
+      const fingers = document.querySelectorAll("#fingerDiagram .finger");
+      fingers.forEach(finger => finger.classList.remove("active"));
+      const fingerKey = fingerMapping[ch.toLowerCase()];
+      if (fingerKey) {
+        const activeFinger = document.querySelector(`#fingerDiagram .finger[data-finger="${fingerKey}"]`);
+        if (activeFinger) activeFinger.classList.add("active");
+      }
+    }
+    
+    // Init
+    document.getElementById("includeNumbersCheckbox").addEventListener("change", initCharacterMode);
+    setMode("landing");
   </script>
 </body>
 </html>
